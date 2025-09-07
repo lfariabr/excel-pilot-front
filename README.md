@@ -5,14 +5,12 @@ UI for guiding ExcelBM Concierges on daily tasks. Built with Next.js 14 (App Rou
 ## Tech Stack & Version Control:
 | Tech | Status | Version |
 | --- | --- | --- |
-| Next.js | ✅ | _v0.0.1_ |
-| TypeScript | 🏗️🧱🔨 | _v0.0.1_ |
-| TailwindCSS | 🏗️🧱🔨 | _v0.0.2_ |
-| shadcn/ui | 🏗️🧱🔨 | _v0.0.3_ |
-| Apollo Client (GraphQL) | 🏗️🧱🔨 | _v0.0.4_ |
-| NextAuth.js | 🏗️🧱🔨 | _v0.0.5_ |
-| OpenAi Chat | 🏗️🧱🔨 | _v0.0.6_ |
-| OpenAI | 🏗️🧱🔨 | _v0.0.7_ |
+| Next.js, Typescript, TailwindCSS | ✅ | _v0.0.1_ |
+| shadcn/ui | 🏗️🧱🔨 | _v0.0.2_ |
+| Apollo Client (GraphQL) | 🏗️🧱🔨 | _v0.0.3_ |
+| NextAuth.js | 🏗️🧱🔨 | _v0.0.4_ |
+| OpenAi Chat | 🏗️🧱🔨 | _v0.0.5_ |
+| OpenAI | 🏗️🧱🔨 | _v0.0.6_ |
 | Concierge Mode | 🏗️🧱🔨 | _v0.0.7_ |
 | Docker | 🏗️🧱🔨 | TBD |
 

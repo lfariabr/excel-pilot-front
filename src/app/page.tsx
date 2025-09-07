@@ -3,7 +3,7 @@ import Image from "next/image";
 export default function HomePage() {
   return (
   <section className="grid gap-6">
-    <h1 className="text-3xl font-bold">Welcome to ExcelPilot Frontend</h1>
+    <h1 className="text-3xl font-bold">Excel's Pilot Frontend</h1>
       <p className="text-gray-600">
         This is the <span className="font-medium">v0.0.1</span> scaffold.
         Next up: install <code>shadcn/ui</code>, wire Apollo Client, then NextAuth.
