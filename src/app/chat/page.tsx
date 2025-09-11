@@ -41,11 +41,14 @@ export default function Chat() {
                   onChange={(e) => setPrompt(e.target.value)}
                 />
                 <div className="flex gap-2">
-                  <Button variant="outline" size="sm">
-                    Search
+                  <Button type="submit" variant="outline" size="sm">
+                    Start New Chat
                   </Button>
-                  <Button variant="outline" size="sm">
-                    Find Similar Cases
+                  <Button type="button" variant="outline" size="sm">
+                    See Previous Chats
+                  </Button>
+                  <Button type="button" variant="outline" size="sm">
+                    FAQ
                   </Button>
                 </div>
               </div>
@@ -54,9 +57,10 @@ export default function Chat() {
             <div className="border-t pt-4">
               <h4 className="text-sm font-medium mb-2">Quick Suggestions</h4>
               <div className="space-y-2 text-sm text-muted-foreground">
-                <p>• Check guest preferences for room 204</p>
-                <p>• Review dining reservations for tonight</p>
-                <p>• Update maintenance schedule</p>
+                <p>• How does the lift reservation policy works?</p>
+                <p>• What are the rules for visitor's car park?</p>
+                <p>• What are the useful building contacts?</p>
+                <p>• Who are the Committee Members?</p>
               </div>
             </div>
           </CardContent>

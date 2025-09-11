@@ -6,7 +6,7 @@ UI for guiding ExcelBM Concierges on daily tasks. Built with Next.js 14 (App Rou
 | Tech | Status | Version |
 | --- | --- | --- |
 | Next.js 14 + TypeScript + TailwindCSS | ✅ | _v0.0.1_ |
-| shadcn/ui + Design System | 🏗️🧱🔨 | _v0.0.2_ |
+| shadcn/ui + Design System | ✅ | _v0.0.2_ |
 | Apollo Client (GraphQL) | 🏗️🧱🔨 | _v0.0.3_ |
 | NextAuth.js + JWT | 🏗️🧱🔨 | _v0.0.4_ |
 | Dashboard Shell | 🏗️🧱🔨 | _v0.0.5_ |
