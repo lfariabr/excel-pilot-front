@@ -3,7 +3,7 @@
 import * as React from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Menu, X, Home, BarChart3, Search, MessageSquare, Settings } from "lucide-react"
+import { Menu, X, Home, BarChart3, Search, MessageSquare, Settings, Key } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -56,19 +56,20 @@ export function Navigation() {
 
           {/* User Menu & Mobile Toggle */}
           <div className="flex items-center space-x-3">
-            {/* User Avatar */}
+            {/* User Avatar
             <Avatar className="h-8 w-8">
               <AvatarImage src="/placeholder-avatar.jpg" alt="User" />
               <AvatarFallback className="bg-blue-100 text-blue-700 text-xs font-medium">
                 JD
               </AvatarFallback>
-            </Avatar>
+            </Avatar> */}
             
-            {/* Version Badge */}
-            <div className="hidden sm:block text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
-              v0.0.2
-            </div>
-
+            {/* Sign In / Register */}
+            <Link href="/login" className="excel-nav-item">
+              <Key className="h-4 w-4" />
+              <span>Sign In</span>
+            </Link>
+            
             {/* Mobile Menu Button */}
             <Button
               variant="ghost"
