@@ -1,10 +1,11 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
 import { Loading, SkeletonCard } from "@/components/ui/loading"
+import { Badge } from "@/components/ui/badge"
 import { BarChart3, Users, Clock, TrendingUp, Search, Plus } from "lucide-react"
 import { UI_DOCS } from "@/components/ui/uiDocs"
+import Chat from "@/app/chat/page"
 
 export default function Dashboard() {
   return (
@@ -122,7 +123,7 @@ export default function Dashboard() {
         </Card>
 
         {/* AI Assistant */}
-        <Card>
+        {/* <Card>
           <CardHeader>
             <CardTitle>AI Assistant</CardTitle>
             <CardDescription>
@@ -151,7 +152,8 @@ export default function Dashboard() {
               </div>
             </div>
           </CardContent>
-        </Card>
+        </Card> */}
+        <Chat />
       </div>
 
       {/* Design System Showcase */}
