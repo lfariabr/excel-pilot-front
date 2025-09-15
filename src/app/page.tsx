@@ -6,6 +6,9 @@ import { Badge } from "@/components/ui/badge"
 import { BarChart3, Users, Clock, TrendingUp, Search, Plus } from "lucide-react"
 import { UI_DOCS } from "@/components/ui/uiDocs"
 import Chat from "@/app/chat/page"
+import { GraphQLDemo } from "@/components/demo/GraphQLDemo"
+import Task from "./task/page"
+
 
 export default function Dashboard() {
   return (
@@ -85,79 +88,24 @@ export default function Dashboard() {
         </Card>
       </div>
 
+      {/* GraphQL Integration Demo */}
+      <div>
+        <h2 className="text-2xl font-bold tracking-tight mb-4">GraphQL Integration Demo</h2>
+        <GraphQLDemo />
+      </div>
+
       {/* Main Content Grid */}
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Recent Tasks */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Tasks</CardTitle>
-            <CardDescription>
-              Latest concierge tasks and their status
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between p-3 border rounded-lg">
-              <div className="space-y-1">
-                <p className="text-sm font-medium">Customer inquiry - Room booking</p>
-                <p className="text-xs text-muted-foreground">2 minutes ago</p>
-              </div>
-              <Badge variant="success">Completed</Badge>
-            </div>
-            
-            <div className="flex items-center justify-between p-3 border rounded-lg">
-              <div className="space-y-1">
-                <p className="text-sm font-medium">Event planning assistance</p>
-                <p className="text-xs text-muted-foreground">15 minutes ago</p>
-              </div>
-              <Badge variant="warning">In Progress</Badge>
-            </div>
-            
-            <div className="flex items-center justify-between p-3 border rounded-lg">
-              <div className="space-y-1">
-                <p className="text-sm font-medium">Restaurant recommendation</p>
-                <p className="text-xs text-muted-foreground">1 hour ago</p>
-              </div>
-              <Badge>Pending</Badge>
-            </div>
-          </CardContent>
-        </Card>
+        <Task />
 
-        {/* AI Assistant */}
-        {/* <Card>
-          <CardHeader>
-            <CardTitle>AI Assistant</CardTitle>
-            <CardDescription>
-              Quick actions and intelligent suggestions
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Input placeholder="Ask AI for help..." />
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm">
-                  Suggest Response
-                </Button>
-                <Button variant="outline" size="sm">
-                  Find Similar Cases
-                </Button>
-              </div>
-            </div>
-            
-            <div className="border-t pt-4">
-              <h4 className="text-sm font-medium mb-2">Quick Suggestions</h4>
-              <div className="space-y-2 text-sm text-muted-foreground">
-                <p>• Check guest preferences for room 204</p>
-                <p>• Review dining reservations for tonight</p>
-                <p>• Update maintenance schedule</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card> */}
-        <Chat />
+        {/* Design System Showcase */}
+        <UI_DOCS />
+        
       </div>
-
-      {/* Design System Showcase */}
-      <UI_DOCS />
+      {/* AI Assistant */}
+      <Chat />
+      
     </div>
   )
 }
