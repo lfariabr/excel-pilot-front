@@ -8,9 +8,9 @@ import { Loading } from '@/components/ui/loading'
 import { Input } from '@/components/ui/input'
 import { 
   useUsers, 
-  useAgents, 
+//   useAgents, 
   useConnectionStatus, 
-  useCreateAgent,
+//   useCreateAgent,
   useApolloUtils 
 } from '@/hooks/useGraphQL'
 import { Wifi, WifiOff, Users, Bot, Plus, RefreshCw, Database } from 'lucide-react'
@@ -22,35 +22,35 @@ export function GraphQLDemo() {
   const { isConnected, connectionError } = useConnectionStatus()
   
   // Data queries with type assertions
-  const { data: usersData, loading: usersLoading, error: usersError, refetch: refetchUsers } = useUsers(5)
-  const { data: agentsData, loading: agentsLoading, error: agentsError, refetch: refetchAgents } = useAgents(5)
+  const { data: usersData, loading: usersLoading, error: usersError, refetch: refetchUsers } = useUsers()
+//   const { data: agentsData, loading: agentsLoading, error: agentsError, refetch: refetchAgents } = useAgents(5)
   
   // Type assertions for GraphQL data
   const users = (usersData as any)?.users || []
-  const agents = (agentsData as any)?.agents || []
+//   const agents = (agentsData as any)?.agents || []
   
   // Mutations
-  const { createAgent, loading: createAgentLoading } = useCreateAgent()
+//   const { createAgent, loading: createAgentLoading } = useCreateAgent()
   
   // Apollo utilities
   const { clearCache } = useApolloUtils()
 
-  const handleCreateAgent = async () => {
-    if (!newAgentName.trim()) return
+//   const handleCreateAgent = async () => {
+//     if (!newAgentName.trim()) return
     
-    try {
-      await createAgent({
-        name: newAgentName,
-        description: `Demo agent created via GraphQL`,
-        systemPrompt: 'You are a helpful ExcelPilot concierge assistant.',
-        isActive: true
-      })
-      setNewAgentName('')
-      refetchAgents()
-    } catch (error) {
-      console.error('Failed to create agent:', error)
-    }
-  }
+//     try {
+//       await createAgent({
+//         name: newAgentName,
+//         description: `Demo agent created via GraphQL`,
+//         systemPrompt: 'You are a helpful ExcelPilot concierge assistant.',
+//         isActive: true
+//       })
+//       setNewAgentName('')
+//       refetchAgents()
+//     } catch (error) {
+//       console.error('Failed to create agent:', error)
+//     }
+//   }
 
   return (
     <div className="space-y-6">
@@ -94,7 +94,7 @@ export function GraphQLDemo() {
               size="sm" 
               onClick={() => {
                 refetchUsers()
-                refetchAgents()
+                // refetchAgents()
               }}
             >
               <RefreshCw className="h-4 w-4 mr-2" />
@@ -169,7 +169,7 @@ export function GraphQLDemo() {
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Create Agent Form */}
-          <div className="flex gap-2">
+          {/* <div className="flex gap-2">
             <Input
               placeholder="Enter agent name..."
               value={newAgentName}
@@ -189,10 +189,10 @@ export function GraphQLDemo() {
                 </>
               )}
             </Button>
-          </div>
+          </div> */}
 
           {/* Agents List */}
-          {agentsLoading ? (
+          {/* {agentsLoading ? (
             <div className="flex items-center gap-2">
               <Loading variant="spinner" size="sm" />
               <span className="text-sm text-muted-foreground">Loading agents...</span>
@@ -226,7 +226,7 @@ export function GraphQLDemo() {
             <div className="text-sm text-muted-foreground">
               No agents found or backend not connected
             </div>
-          )}
+          )} */}
         </CardContent>
       </Card>
 

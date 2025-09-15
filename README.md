@@ -3,26 +3,24 @@
 UI for guiding ExcelBM Concierges on daily tasks. Built with Next.js 14 (App Router), TypeScript, TailwindCSS, shadcn/ui, Apollo Client, and NextAuth.js — integrating with the ExcelPilot backend (GraphQL + Auth + Redis).
 
 ## Tech Stack & Version Control:
-| Tech | Status | Version |
-| --- | --- | --- |
-| Next.js 14 + TypeScript + TailwindCSS | ✅ | _v0.0.1_ |
-| shadcn/ui + Design System | ✅ | _v0.0.2_ |
-| Apollo Client (GraphQL) | ✅ | _v0.0.3_ |
-| NextAuth.js + JWT | 🏗️🧱🔨 | _v0.0.4_ |
-| Dashboard Shell | 🏗️🧱🔨 | _v0.0.5_ |
-| Protected Routes + Optimistic UI | 🏗️🧱🔨 | _v0.0.6_ |
-| AskAI Chat Widget | 🏗️🧱🔨 | _v0.0.7_ |
-| Goggins Mode Modal | 🏗️🧱🔨 | _v0.0.8_ |
-| Docker | 🏗️🧱🔨 | TBD |
-| Jest + Testing | 🏗️🧱🔨 | TBD |
+| Tech | Status | Version | Tags |
+| --- | --- | --- | --- |
+| Next.js 14 + TypeScript + TailwindCSS | ✅ | _v0.0.1_ | _Foundation_ |
+| shadcn/ui + Design System | ✅ | _v0.0.2_ | _UI/UX_ |
+| Apollo Client (GraphQL) | ✅ | _v0.0.3_ | _Data Integration_ |
+| NextAuth.js + JWT | 🏗️🧱🔨 | _v0.0.4_ | _Authentication_ |
+| Dashboard Shell | 🏗️🧱🔨 | _v0.0.5_ | _UI/UX_ |
+| Protected Routes + Optimistic UI | 🏗️🧱🔨 | _v0.0.6_ | _UI/UX_ |
+| AskAI Chat Widget | 🏗️🧱🔨 | _v0.0.7_ | _UI/UX_ |
+| Docker | 🏗️🧱🔨 | TBD | _DevOps_ |
+| Jest + Testing | 🏗️🧱🔨 | TBD | _Testing_ |
 
 ## **Detailed Changelog** 
 
 ### **DONE**:
-#### Foundation & UI
-- **v0.0.1** - Foundation: Next.js 14 + App Router + TypeScript + TailwindCSS setup, base layout with sticky header, navigation structure, Providers component architecture
+**v0.0.1** - Foundation: Next.js 14 + App Router + TypeScript + TailwindCSS setup, base layout with sticky header, navigation structure, Providers component architecture
 
-- **v0.0.2** - Design System Layer
+**v0.0.2** - Design System Layer
 - Install shadcn/ui CLI and configure components.json
 - Set up core components: Button, Card, Input, Badge, Avatar, Dialog
 - Create design tokens and theme configuration
@@ -30,8 +28,7 @@ UI for guiding ExcelBM Concierges on daily tasks. Built with Next.js 14 (App Rou
 - Implement responsive navigation with mobile menu
 - Create component library documentation
 
-#### Data Integration
-- **v0.0.3** - Apollo Client (GraphQL Integration)
+**v0.0.3** - Apollo Client (GraphQL Integration)
 - Configure Apollo Client with backend GraphQL endpoint
 - Set up authentication link for JWT token handling
 - Create GraphQL codegen for type safety

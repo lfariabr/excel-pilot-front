@@ -1,9 +1,9 @@
 import { gql } from '@apollo/client'
 
-// User Queries
+// User Queries - WORKING ✅✅✅
 export const GET_USERS = gql`
-  query GetUsers($limit: Int, $offset: Int) {
-    users(limit: $limit, offset: $offset) {
+  query GetUsers {
+    users {
       id
       email
       role
@@ -11,8 +11,9 @@ export const GET_USERS = gql`
       updatedAt
     }
   }
-`
+`;
 
+// PENDING
 export const GET_USER_BY_ID = gql`
   query GetUserById($id: ID!) {
     user(id: $id) {
@@ -25,6 +26,7 @@ export const GET_USER_BY_ID = gql`
   }
 `
 
+// PENDING
 export const GET_CURRENT_USER = gql`
   query GetCurrentUser {
     me {
@@ -37,43 +39,7 @@ export const GET_CURRENT_USER = gql`
   }
 `
 
-// Agent Queries
-export const GET_AGENTS = gql`
-  query GetAgents($limit: Int, $offset: Int) {
-    agents(limit: $limit, offset: $offset) {
-      id
-      name
-      description
-      systemPrompt
-      isActive
-      createdAt
-      updatedAt
-      user {
-        id
-        email
-      }
-    }
-  }
-`
-
-export const GET_AGENT_BY_ID = gql`
-  query GetAgentById($id: ID!) {
-    agent(id: $id) {
-      id
-      name
-      description
-      systemPrompt
-      isActive
-      createdAt
-      updatedAt
-      user {
-        id
-        email
-      }
-    }
-  }
-`
-
+// PENDING
 // Chat Message Queries
 export const GET_CHAT_MESSAGES = gql`
   query GetChatMessages($agentId: ID!, $limit: Int, $offset: Int) {
@@ -94,6 +60,7 @@ export const GET_CHAT_MESSAGES = gql`
   }
 `
 
+// PENDING
 // Authentication Mutations
 export const LOGIN_USER = gql`
   mutation LoginUser($email: String!, $password: String!) {
@@ -108,6 +75,7 @@ export const LOGIN_USER = gql`
   }
 `
 
+// PENDING
 export const REGISTER_USER = gql`
   mutation RegisterUser($email: String!, $password: String!, $role: String) {
     register(email: $email, password: $password, role: $role) {
@@ -121,7 +89,7 @@ export const REGISTER_USER = gql`
   }
 `
 
-// User Mutations
+// PENDING
 export const UPDATE_USER = gql`
   mutation UpdateUser($id: ID!, $input: UpdateUserInput!) {
     updateUser(id: $id, input: $input) {
@@ -142,46 +110,7 @@ export const DELETE_USER = gql`
   }
 `
 
-// Agent Mutations
-export const CREATE_AGENT = gql`
-  mutation CreateAgent($input: CreateAgentInput!) {
-    createAgent(input: $input) {
-      id
-      name
-      description
-      systemPrompt
-      isActive
-      createdAt
-      user {
-        id
-        email
-      }
-    }
-  }
-`
-
-export const UPDATE_AGENT = gql`
-  mutation UpdateAgent($id: ID!, $input: UpdateAgentInput!) {
-    updateAgent(id: $id, input: $input) {
-      id
-      name
-      description
-      systemPrompt
-      isActive
-      updatedAt
-    }
-  }
-`
-
-export const DELETE_AGENT = gql`
-  mutation DeleteAgent($id: ID!) {
-    deleteAgent(id: $id) {
-      success
-      message
-    }
-  }
-`
-
+// PENDING
 // Chat Message Mutations
 export const SEND_CHAT_MESSAGE = gql`
   mutation SendChatMessage($input: SendChatMessageInput!) {
@@ -202,15 +131,7 @@ export const SEND_CHAT_MESSAGE = gql`
   }
 `
 
-export const DELETE_CHAT_MESSAGE = gql`
-  mutation DeleteChatMessage($id: ID!) {
-    deleteChatMessage(id: $id) {
-      success
-      message
-    }
-  }
-`
-
+// PENDING
 // Response Queries (for OpenAI integration)
 export const GET_RESPONSES = gql`
   query GetResponses($limit: Int, $offset: Int, $cursor: String) {

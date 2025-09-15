@@ -4,21 +4,16 @@ import {
   GET_USERS, 
   GET_USER_BY_ID, 
   GET_CURRENT_USER,
-  GET_AGENTS,
-  GET_AGENT_BY_ID,
   GET_CHAT_MESSAGES,
   LOGIN_USER,
   REGISTER_USER,
-  CREATE_AGENT,
-  UPDATE_AGENT,
-  DELETE_AGENT,
   SEND_CHAT_MESSAGE
 } from '@/lib/apollo/queries';
 
 // User Hooks
-export const useUsers = (limit = 10, offset = 0) => {
+export const useUsers = () => {
   return useQuery(GET_USERS, {
-    variables: { limit, offset },
+    // variables: { limit, offset },
     errorPolicy: 'all'
   })
 }
@@ -38,20 +33,20 @@ export const useCurrentUser = () => {
 }
 
 // Agent Hooks
-export const useAgents = (limit = 10, offset = 0) => {
-  return useQuery(GET_AGENTS, {
-    variables: { limit, offset },
-    errorPolicy: 'all'
-  })
-}
+// export const useAgents = (limit = 10, offset = 0) => {
+//   return useQuery(GET_AGENTS, {
+//     variables: { limit, offset },
+//     errorPolicy: 'all'
+//   })
+// }
 
-export const useAgent = (id: string) => {
-  return useQuery(GET_AGENT_BY_ID, {
-    variables: { id },
-    skip: !id,
-    errorPolicy: 'all'
-  })
-}
+// export const useAgent = (id: string) => {
+//   return useQuery(GET_AGENT_BY_ID, {
+//     variables: { id },
+//     skip: !id,
+//     errorPolicy: 'all'
+//   })
+// }
 
 // Chat Message Hooks
 export const useChatMessages = (agentId: string, limit = 50, offset = 0) => {
@@ -114,81 +109,6 @@ export const useRegister = () => {
   }
 
   return { register, loading, error }
-}
-
-// Agent Management Hooks
-export const useCreateAgent = () => {
-  const [createAgentMutation, { loading, error }] = useMutation(CREATE_AGENT, {
-    refetchQueries: [{ query: GET_AGENTS }]
-  })
-  
-  const createAgent = async (input: {
-    name: string
-    description?: string
-    systemPrompt?: string
-    isActive?: boolean
-  }) => {
-    try {
-      const result = await createAgentMutation({
-        variables: { input }
-      })
-      
-      const agentData = result.data as any
-      return agentData?.createAgent
-    } catch (err) {
-      console.error('Create agent error:', err)
-      throw err
-    }
-  }
-
-  return { createAgent, loading, error }
-}
-
-export const useUpdateAgent = () => {
-  const [updateAgentMutation, { loading, error }] = useMutation(UPDATE_AGENT)
-  
-  const updateAgent = async (id: string, input: {
-    name?: string
-    description?: string
-    systemPrompt?: string
-    isActive?: boolean
-  }) => {
-    try {
-      const result = await updateAgentMutation({
-        variables: { id, input }
-      })
-      
-      const agentData = result.data as any
-      return agentData?.updateAgent
-    } catch (err) {
-      console.error('Update agent error:', err)
-      throw err
-    }
-  }
-
-  return { updateAgent, loading, error }
-}
-
-export const useDeleteAgent = () => {
-  const [deleteAgentMutation, { loading, error }] = useMutation(DELETE_AGENT, {
-    refetchQueries: [{ query: GET_AGENTS }]
-  })
-  
-  const deleteAgent = async (id: string) => {
-    try {
-      const result = await deleteAgentMutation({
-        variables: { id }
-      })
-      
-      const deleteData = result.data as any
-      return deleteData?.deleteAgent
-    } catch (err) {
-      console.error('Delete agent error:', err)
-      throw err
-    }
-  }
-
-  return { deleteAgent, loading, error }
 }
 
 // Chat Message Hooks
