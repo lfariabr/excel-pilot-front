@@ -1,56 +1,33 @@
 'use client'
 
-import { useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Loading } from '@/components/ui/loading'
-import { Input } from '@/components/ui/input'
 import { 
-  useUsers, 
 //   useAgents, 
-  useConnectionStatus, 
 //   useCreateAgent,
+  useConnectionStatus, 
   useApolloUtils 
-} from '@/hooks/useGraphQL'
+} from '@/lib/hooks/useGraphQL'
 import { Wifi, WifiOff, Users, Bot, Plus, RefreshCw, Database } from 'lucide-react'
 
+// Users
+import { useUsers } from '@/lib/hooks/useUsers'
+
 export function GraphQLDemo() {
-  const [newAgentName, setNewAgentName] = useState('')
   
   // Connection status
   const { isConnected, connectionError } = useConnectionStatus()
   
   // Data queries with type assertions
   const { data: usersData, loading: usersLoading, error: usersError, refetch: refetchUsers } = useUsers()
-//   const { data: agentsData, loading: agentsLoading, error: agentsError, refetch: refetchAgents } = useAgents(5)
   
   // Type assertions for GraphQL data
   const users = (usersData as any)?.users || []
-//   const agents = (agentsData as any)?.agents || []
-  
-  // Mutations
-//   const { createAgent, loading: createAgentLoading } = useCreateAgent()
   
   // Apollo utilities
   const { clearCache } = useApolloUtils()
-
-//   const handleCreateAgent = async () => {
-//     if (!newAgentName.trim()) return
-    
-//     try {
-//       await createAgent({
-//         name: newAgentName,
-//         description: `Demo agent created via GraphQL`,
-//         systemPrompt: 'You are a helpful ExcelPilot concierge assistant.',
-//         isActive: true
-//       })
-//       setNewAgentName('')
-//       refetchAgents()
-//     } catch (error) {
-//       console.error('Failed to create agent:', error)
-//     }
-//   }
 
   return (
     <div className="space-y-6">
@@ -153,80 +130,6 @@ export function GraphQLDemo() {
               No users found or backend not connected
             </div>
           )}
-        </CardContent>
-      </Card>
-
-      {/* Agents Query & Mutation Demo */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Bot className="h-5 w-5" />
-            Agents Query & Mutation Demo
-          </CardTitle>
-          <CardDescription>
-            Managing AI agents via GraphQL
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Create Agent Form */}
-          {/* <div className="flex gap-2">
-            <Input
-              placeholder="Enter agent name..."
-              value={newAgentName}
-              onChange={(e) => setNewAgentName(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleCreateAgent()}
-            />
-            <Button 
-              onClick={handleCreateAgent}
-              disabled={createAgentLoading || !newAgentName.trim()}
-            >
-              {createAgentLoading ? (
-                <Loading variant="spinner" size="sm" />
-              ) : (
-                <>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create Agent
-                </>
-              )}
-            </Button>
-          </div> */}
-
-          {/* Agents List */}
-          {/* {agentsLoading ? (
-            <div className="flex items-center gap-2">
-              <Loading variant="spinner" size="sm" />
-              <span className="text-sm text-muted-foreground">Loading agents...</span>
-            </div>
-          ) : agentsError ? (
-            <div className="text-sm text-red-600">
-              Error: {agentsError.message}
-            </div>
-          ) : agents.length > 0 ? (
-            <div className="space-y-2">
-              {agents.map((agent: any) => (
-                <div key={agent.id} className="flex items-center justify-between p-3 border rounded">
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium">{agent.name}</span>
-                      <Badge variant={agent.isActive ? "success" : "secondary"}>
-                        {agent.isActive ? "Active" : "Inactive"}
-                      </Badge>
-                    </div>
-                    {agent.description && (
-                      <p className="text-sm text-muted-foreground">{agent.description}</p>
-                    )}
-                  </div>
-                  <span className="text-xs text-muted-foreground">
-                    {new Date(agent.createdAt).toLocaleDateString()}
-                  </span>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-sm text-muted-foreground">
-              No agents found or backend not connected
-            </div>
-          )} */}
         </CardContent>
       </Card>
 

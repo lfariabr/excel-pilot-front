@@ -1,7 +1,6 @@
 import { useQuery, useMutation, useApolloClient } from '@apollo/client/react';
 import { useState } from 'react';
 import { 
-  GET_USERS, 
   GET_USER_BY_ID, 
   GET_CURRENT_USER,
   GET_CHAT_MESSAGES,
@@ -9,6 +8,9 @@ import {
   REGISTER_USER,
   SEND_CHAT_MESSAGE
 } from '@/lib/apollo/queries';
+
+// User
+import { GET_USERS } from '@/lib/graphql/user/queries';
 
 // User Hooks
 export const useUsers = () => {

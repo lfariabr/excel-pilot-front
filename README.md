@@ -34,9 +34,10 @@ UI for guiding ExcelBM Concierges on daily tasks. Built with Next.js 14 (App Rou
 - Create GraphQL codegen for type safety
 - Implement error handling and retry policies
 - Add optimistic updates configuration
-- Create custom hooks for common queries/mutations
 
 ### **WORK IN PROGRESS**:
+**v0.0.3** - Apollo Client (GraphQL Integration)
+- Create custom hooks for common queries/mutations
 
 #### Authentication & Core Features:
 
