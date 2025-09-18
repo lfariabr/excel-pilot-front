@@ -29,7 +29,6 @@ const authLink = new ApolloLink((operation, forward) => {
       'Content-Type': 'application/json',
     },
   }))
-
   return forward(operation)
 })
 

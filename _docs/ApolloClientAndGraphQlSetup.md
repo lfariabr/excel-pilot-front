@@ -1,4 +1,4 @@
-# 🧠 **WHAT THE FUCK IS THIS APOLLO CLIENT + GRAPHQL SETUP?**
+# 🧠 **WHAT IS THIS APOLLO CLIENT + GRAPHQL SETUP?**
 
 ## **TL;DR - The Big Picture**
 We're building a **smart data layer** that connects the React app to the ExcelPilot backend. Picture it as a **super-powered fetch()** that:
@@ -166,7 +166,7 @@ return <UsersList users={data} />
 
 ---
 
-## **🚀 WHY THIS IS FUCKING AWESOME**
+## **🚀 WHY THIS IS AWESOME**
 
 1. **Type Safety** - TypeScript knows exactly what data looks like
 2. **Automatic Caching** - No duplicate requests, app feels instant

@@ -5,7 +5,7 @@
 
 ## 🏗️ **Architecture Overview**
 
-We built a complete authentication system that integrates seamlessly with Apollo Client and your GraphQL backend. Here's how all the pieces work together:
+We built a complete authentication system that integrates seamlessly with Apollo Client and the GraphQL backend. Here's how all the pieces are working:
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
@@ -43,6 +43,11 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
     }
   }
 })
+
+// HTTP LINK - Connects to GraphQL backend
+const httpLink = createHttpLink({
+  uri: process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT || 'http://localhost:4000/graphql',
+})
 ```
 
 **Why this matters:** Every GraphQL request automatically includes the user's JWT token, and if the token expires or becomes invalid, the user is automatically redirected to login.
@@ -69,10 +74,10 @@ export const GET_CURRENT_USER = gql`
 `;
 ```
 
-**Backend Integration:** These match your backend's GraphQL schema perfectly:
+**Backend Integration:** These match my backend's GraphQL schema perfectly:
 - Uses `input` parameter (not separate email/password)
 - Returns `accessToken` (not `token`)
-- Matches your `AuthPayload` type
+- Matches my `AuthPayload` type
 
 ### **3. TypeScript Types** (`/src/lib/graphql/types/authTypes.ts`)
 **What it does:** Provides type safety for all auth operations
@@ -89,7 +94,7 @@ export interface AuthPayload {
 }
 ```
 
-**Why this matters:** TypeScript catches errors at compile time, ensuring your auth code is bulletproof.
+**Why this matters:** TypeScript catches errors at compile time, ensuring my auth code is bulletproof.
 
 ### **4. Authentication Hooks** (`/src/lib/hooks/useAuth.ts`)
 **What it does:** Provides easy-to-use React hooks for all auth operations
