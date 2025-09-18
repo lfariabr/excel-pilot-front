@@ -158,9 +158,9 @@ export default function Chat() {
       </div>
       
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 min-h-0">
         {/* Chat Header */}
-        <div className="border-b bg-white dark:bg-gray-800 px-4 lg:px-6 py-4 flex items-center gap-3">
+        <div className="border-b bg-white dark:bg-gray-800 px-4 lg:px-6 py-4 flex items-center gap-3 flex-shrink-0">
           {/* Mobile Menu Button */}
           <Button
             variant="ghost"
@@ -182,7 +182,7 @@ export default function Chat() {
         </div>
 
         {/* Messages Container */}
-        <div className="flex-1 overflow-hidden">
+        <div className="flex-1 min-h-0 overflow-hidden">
           <ChatMessages 
             messages={currentConversation?.messages || []}
             isLoading={false}
@@ -190,12 +190,14 @@ export default function Chat() {
         </div>
 
         {/* Chat Input */}
-        <ChatInput
-          value={prompt}
-          onChange={setPrompt}
-          onSend={handleSendMessage}
-          disabled={false}
-        />
+        <div className="flex-shrink-0">
+          <ChatInput
+            value={prompt}
+            onChange={setPrompt}
+            onSend={handleSendMessage}
+            disabled={false}
+          />
+        </div>
       </div>
     </div>
   );

@@ -30,7 +30,7 @@ export function ChatMessages({ messages, isLoading = false }: ChatMessagesProps)
 
   if (messages.length === 0 && !isLoading) {
     return (
-      <div className="flex-1 flex items-center justify-center p-8">
+      <div className="h-full flex items-center justify-center p-8">
         <div className="text-center max-w-md">
           <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
             <Bot className="w-8 h-8 text-blue-600 dark:text-blue-400" />
@@ -59,7 +59,7 @@ export function ChatMessages({ messages, isLoading = false }: ChatMessagesProps)
   }
 
   return (
-    <div className="flex-1 overflow-y-auto">
+    <div className="h-full overflow-y-auto">
       <div className="max-w-4xl mx-auto p-4 space-y-6">
         {messages.map((message) => (
           <MessageBubble key={message.id} message={message} />
