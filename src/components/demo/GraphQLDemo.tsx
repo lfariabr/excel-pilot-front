@@ -10,10 +10,25 @@ import {
   useConnectionStatus, 
   useApolloUtils 
 } from '@/lib/hooks/useGraphQL'
-import { Wifi, WifiOff, Users, Bot, Plus, RefreshCw, Database } from 'lucide-react'
+import { 
+  Database, 
+  Users, 
+  RefreshCw, 
+  Trash2, 
+  CheckCircle, 
+  XCircle, 
+  Wifi, 
+  WifiOff,
+  MessageSquare
+} from 'lucide-react'
 
 // Users
 import { useUsers } from '@/lib/hooks/useUsers'
+
+// Messages
+import { useMessages } from '@/lib/hooks/useMessages'
+import { Message } from '@/lib/graphql/types/messageTypes'
+  
 
 export function GraphQLDemo() {
   
@@ -22,9 +37,13 @@ export function GraphQLDemo() {
   
   // Data queries with type assertions
   const { data: usersData, loading: usersLoading, error: usersError, refetch: refetchUsers } = useUsers()
+  const { data: messagesData, loading: messagesLoading, error: messagesError, refetch: refetchMessages } = useMessages({ 
+    conversationId: "507f1f77bcf86cd799439011" 
+  })
   
   // Type assertions for GraphQL data
   const users = (usersData as any)?.users || []
+  const messages = (messagesData as any)?.messages?.edges?.map((edge: any) => edge.node) || []
   
   // Apollo utilities
   const { clearCache } = useApolloUtils()
@@ -128,6 +147,58 @@ export function GraphQLDemo() {
           ) : (
             <div className="text-sm text-muted-foreground">
               No users found or backend not connected
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Messages Query Demo */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <MessageSquare className="h-5 w-5" />
+            Messages Query Demo
+          </CardTitle>
+          <CardDescription>
+            Fetching messages from GraphQL backend
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {messagesLoading ? (
+            <div className="flex items-center gap-2">
+              <Loading variant="spinner" size="sm" />
+              <span className="text-sm text-muted-foreground">Loading messages...</span>
+            </div>
+          ) : messagesError ? (
+            <div className="text-sm text-red-600">
+              Error: {messagesError.message}
+            </div>
+          ) : messages.length > 0 ? (
+            <div className="space-y-2">
+              {messages.map((message: any) => (
+                <div key={message.id} className="flex items-center justify-between p-2 border rounded">
+                  <div className="flex-1">
+                    <div className="font-medium text-sm">{message.content}</div>
+                    <div className="text-xs text-muted-foreground mt-1">
+                      ID: {message.id}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-xs text-muted-foreground">
+                      Created: {new Date(message.createdAt).toLocaleDateString()}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <div className="text-sm text-muted-foreground">
+                No messages found for conversation "507f1f77bcf86cd799439011"
+              </div>
+              <div className="text-xs text-muted-foreground">
+                This could mean the backend is not connected, the conversation doesn't exist, or there are no messages yet.
+              </div>
             </div>
           )}
         </CardContent>

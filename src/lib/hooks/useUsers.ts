@@ -1,5 +1,5 @@
 import { useQuery } from "@apollo/client/react";
-import { GET_CURRENT_USER, GET_USERS, GET_USER_BY_ID } from "../graphql/user/queries";
+import { GET_USERS, GET_CURRENT_USER, GET_USER_BY_ID } from "../graphql/user/queries";
 import { User, UsersResponse, UserResponse, CurrentUserResponse } from "../graphql/types/userTypes";
 import { UsersData } from "../graphql/types/userTypes";
 
