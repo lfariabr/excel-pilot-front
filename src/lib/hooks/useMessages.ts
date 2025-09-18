@@ -10,7 +10,7 @@ export const useMessages = (options: UseMessagesOptions = {}) => {
     const { conversationId } = options;
     
     return useQuery(GET_MESSAGES, {
-        variables: { conversationId: conversationId || "507f1f77bcf86cd799439011" }, // Valid ObjectId format
+        variables: { conversationId: conversationId || "68bf5caac27ae372eb51be0b" }, // Valid ObjectId format
         skip: !conversationId, // Skip query if no conversationId provided
         errorPolicy: "all"
     });

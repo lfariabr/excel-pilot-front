@@ -28,7 +28,10 @@ import { useUsers } from '@/lib/hooks/useUsers'
 // Messages
 import { useMessages } from '@/lib/hooks/useMessages'
 import { Message } from '@/lib/graphql/types/messageTypes'
-  
+
+// Conversations
+import { useConversations } from '@/lib/hooks/useConversations'
+import type { Conversation } from '@/lib/graphql/types/conversationTypes'
 
 export function GraphQLDemo() {
   
@@ -38,12 +41,14 @@ export function GraphQLDemo() {
   // Data queries with type assertions
   const { data: usersData, loading: usersLoading, error: usersError, refetch: refetchUsers } = useUsers()
   const { data: messagesData, loading: messagesLoading, error: messagesError, refetch: refetchMessages } = useMessages({ 
-    conversationId: "507f1f77bcf86cd799439011" 
+    conversationId: "68bf5caac27ae372eb51be0b" // Valid ObjectId format
   })
+  const { data: conversationsData, loading: conversationsLoading, error: conversationsError, refetch: refetchConversations } = useConversations()
   
   // Type assertions for GraphQL data
   const users = (usersData as any)?.users || []
   const messages = (messagesData as any)?.messages?.edges?.map((edge: any) => edge.node) || []
+  const conversations = (conversationsData as any)?.conversations || []
   
   // Apollo utilities
   const { clearCache } = useApolloUtils()
@@ -198,6 +203,67 @@ export function GraphQLDemo() {
               </div>
               <div className="text-xs text-muted-foreground">
                 This could mean the backend is not connected, the conversation doesn't exist, or there are no messages yet.
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Conversations Query Demo */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <MessageSquare className="h-5 w-5" />
+            Conversations Query Demo
+          </CardTitle>
+          <CardDescription>
+            Fetching conversations from GraphQL backend
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {conversationsLoading ? (
+            <div className="flex items-center gap-2">
+              <Loading variant="spinner" size="sm" />
+              <span className="text-sm text-muted-foreground">Loading conversations...</span>
+            </div>
+          ) : conversationsError ? (
+            <div className="space-y-2">
+              <div className="text-sm text-red-600">
+                Error: {conversationsError.message}
+              </div>
+              <div className="text-xs text-muted-foreground">
+                {conversationsError.message.includes('sub') || conversationsError.message.includes('UNAUTHENTICATED') ? (
+                  <>This endpoint requires authentication. Please log in or disable authentication on the backend for testing.</>
+                ) : (
+                  <>This is expected if the backend is not running or doesn't have conversation endpoints configured.</>
+                )}
+              </div>
+            </div>
+          ) : conversations.length > 0 ? (
+            <div className="space-y-2">
+              {conversations.map((conversation: any) => (
+                <div key={conversation.id} className="flex items-center justify-between p-2 border rounded">
+                  <div>
+                    <div className="font-medium text-sm">{conversation.title}</div>
+                    <div className="text-xs text-muted-foreground mt-1">
+                      ID: {conversation.id}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-xs text-muted-foreground">
+                      Created: {new Date(conversation.createdAt).toLocaleDateString()}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <div className="text-sm text-muted-foreground">
+                No conversations found
+              </div>
+              <div className="text-xs text-muted-foreground">
+                This could mean the backend is not connected or there are no conversations yet.
               </div>
             </div>
           )}
