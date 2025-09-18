@@ -3,6 +3,14 @@ import { HttpLink } from '@apollo/client/link/http'
 import { ErrorLink } from '@apollo/client/link/error'
 import { RetryLink } from '@apollo/client/link/retry'
 
+// Add router import for auth redirects
+let router: any = null
+if (typeof window !== 'undefined') {
+  import('next/router').then((routerModule) => {
+    router = routerModule.default
+  })
+}
+
 // --- HTTP link ---
 const httpLink = new HttpLink({
   uri: process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT || 'http://localhost:4000/graphql',
@@ -41,7 +49,13 @@ const errorLink = new ErrorLink(({ graphQLErrors, networkError }: any) => {
       ) {
         if (typeof window !== 'undefined') {
           localStorage.removeItem('excel-pilot-token')
-          // TODO: router.push('/login') when you wire auth
+          // Redirect to login page on auth errors
+          if (router) {
+            router.push('/login')
+          } else {
+            // Fallback if router isn't loaded yet
+            window.location.href = '/login'
+          }
         }
       }
     }

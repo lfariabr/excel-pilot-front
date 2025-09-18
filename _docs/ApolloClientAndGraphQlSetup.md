@@ -1,4 +1,4 @@
-# 🧠 **WHAT THE FUCK IS THIS GRAPHQL SETUP?**
+# 🧠 **WHAT THE FUCK IS THIS APOLLO CLIENT + GRAPHQL SETUP?**
 
 ## **TL;DR - The Big Picture**
 We're building a **smart data layer** that connects the React app to the ExcelPilot backend. Picture it as a **super-powered fetch()** that:
