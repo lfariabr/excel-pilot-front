@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { useLogin } from "@/lib/hooks/useAuth";
+import { useLogin } from "@/lib/hooks/auth/useLogin";
 import { Button } from "@/components/ui/button";
 import { Loading } from "@/components/ui/loading";
 

@@ -14,3 +14,17 @@ export const useUsers = () => {
       errorPolicy: 'all'
     })
 }
+
+export const useUser = (id: string) => {
+  return useQuery(GET_USER_BY_ID, {
+    variables: { id },
+    skip: !id,
+    errorPolicy: 'all'
+  })
+}
+
+export const useCurrentUser = () => {
+  return useQuery(GET_CURRENT_USER, {
+    errorPolicy: 'all'
+  })
+}

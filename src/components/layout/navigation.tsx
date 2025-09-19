@@ -3,11 +3,12 @@
 import * as React from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Menu, X, Home, BarChart3, Search, MessageSquare, Settings, Key, LogOut, User } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { Menu, X, Home, BarChart3, Search, MessageSquare, Settings, Key, LogOut } from "lucide-react"
+import { cn } from "@/lib/utils/cnUtils"
 import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { useAuthStatus, useLogout } from "@/lib/hooks/useAuth"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { useAuthStatus } from "@/lib/hooks/auth/useAuthStatus"
+import { useLogout } from "@/lib/hooks/auth/useLogout"
 import {
   DropdownMenu,
   DropdownMenuContent,
