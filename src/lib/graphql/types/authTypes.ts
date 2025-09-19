@@ -22,6 +22,7 @@ export interface RegisterInput {
   email: string;
   password: string;
   name: string;
+  role: string;
 }
 
 export interface LoginResponse {

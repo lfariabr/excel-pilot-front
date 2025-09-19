@@ -1,14 +1,6 @@
-import { useQuery, useMutation, useApolloClient } from '@apollo/client/react';
+import { useApolloClient } from '@apollo/client/react';
 import { useState } from 'react';
-import { 
-  GET_CURRENT_USER,
-} from '@/lib/apollo/queries';
-
-export const useCurrentUser = () => {
-  return useQuery(GET_CURRENT_USER, {
-    errorPolicy: 'all'
-  })
-}
+import { useCurrentUser } from './useUsers';
 
 // Apollo Client Utilities Hook
 export const useApolloUtils = () => {

@@ -5,13 +5,14 @@ export const USER_FRAGMENT = gql`
   fragment UserFields on User {
     id
     email
+    name
     role
     createdAt
     updatedAt
   }
 `;
 
-// User Queries - WORKING ✅✅✅
+// User Queries - WORKING 
 export const GET_USERS = gql`
   query GetUsers {
     users {
@@ -21,17 +22,15 @@ export const GET_USERS = gql`
   ${USER_FRAGMENT}
 `;
 
-// Todo...
-
+// Current User Query - Fixed to match backend schema
 export const GET_CURRENT_USER = gql`
   query GetCurrentUser {
-    getCurrentUser {
+    me {
       ...UserFields
     }
   }
   ${USER_FRAGMENT}
 `;
-
 
 export const GET_USER_BY_ID = gql`
   query GetUserById($id: ID!) {

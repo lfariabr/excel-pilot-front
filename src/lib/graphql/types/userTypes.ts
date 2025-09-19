@@ -3,14 +3,16 @@
 export interface User {
   id: string;
   email: string;
+  name: string;
   role: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface UsersResponse {
   users: User[];
 }
 
-// Working ✅✅✅
 export interface UsersData {
     users: User[];
 }
@@ -20,5 +22,5 @@ export interface UserResponse {
 }
 
 export interface CurrentUserResponse {
-  getCurrentUser: User;
+  me: User;
 }
