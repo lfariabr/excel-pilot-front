@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useMutation, useApolloClient } from "@apollo/client/react";
 import { LoginResponse } from "../../graphql/types/authTypes";
-import { LOGIN_MUTATION } from "../../graphql/auth/queries";
+import { LOGIN_MUTATION } from "../../graphql/auth/mutations";
 import { GET_CURRENT_USER } from "../../graphql/auth/queries";
 import { LoginInput } from "../../graphql/types/authTypes";
 import { setToken } from "../../utils/tokenUtils";

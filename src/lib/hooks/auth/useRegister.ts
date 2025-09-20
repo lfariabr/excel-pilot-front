@@ -1,7 +1,7 @@
 import { useRouter } from "next/navigation";
 import { useMutation, useApolloClient } from "@apollo/client/react";
 import { RegisterResponse } from "../../graphql/types/authTypes";
-import { REGISTER_MUTATION } from "../../graphql/auth/queries";
+import { REGISTER_MUTATION } from "../../graphql/auth/mutations";
 import { GET_CURRENT_USER } from "../../graphql/auth/queries";
 import { RegisterInput } from "../../graphql/types/authTypes";
 import { setToken } from "../../utils/tokenUtils";

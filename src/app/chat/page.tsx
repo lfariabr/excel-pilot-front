@@ -5,132 +5,93 @@ import { ChatMessages } from "@/components/chat/ChatMessages";
 import { ChatInput } from "@/components/chat/ChatInput";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
-
-export interface Message {
-  id: string;
-  content: string;
-  role: 'user' | 'assistant';
-  timestamp: Date;
-}
-
-export interface Conversation {
-  id: string;
-  title: string;
-  messages: Message[];
-  createdAt: Date;
-  updatedAt: Date;
-}
+import { useChat } from "@/lib/hooks/chat";
 
 export default function Chat() {
-  const [conversations, setConversations] = useState<Conversation[]>([
-    {
-      id: '1',
-      title: 'Loading Dock Help',
-      messages: [
-        {
-          id: '1',
-          content: 'What are the specs of the loading dock?',
-          role: 'user',
-          timestamp: new Date('2024-01-15T10:30:00')
-        },
-        {
-          id: '2',
-          content: 'The loading dock has a height of 3,5m and a width of 2,5m. It is possible to book it for moving in/out of the building.:\n\nHere\'s a step-by-step guide:\n1. Go to Building Link tab Reservations\n2. Click on New Reservation\n3. Fill in the form with the following information:\n4. Wait for Building Management confirmation\n\nYou can always contact the Concierge for more information. 😄',
-          role: 'assistant',
-          timestamp: new Date('2024-01-15T10:30:15')
-        }
-      ],
-      createdAt: new Date('2024-01-15T10:30:00'),
-      updatedAt: new Date('2024-01-15T10:30:15')
-    }
-  ]);
+  const {
+    conversations,
+    messages,
+    currentConversationId,
+    isLoading,
+    isSendingMessage,
+    isStartingConversation,
+    error,
+    createNewConversation,
+    sendChatMessage,
+    switchConversation,
+    startNewChatWithMessage
+  } = useChat();
   
-  const [currentConversationId, setCurrentConversationId] = useState<string>('1');
   const [prompt, setPrompt] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const currentConversation = conversations.find(c => c.id === currentConversationId);
 
-  const handleNewChat = () => {
-    const newConversation: Conversation = {
-      id: Date.now().toString(),
-      title: 'New Chat',
-      messages: [],
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
-    
-    setConversations(prev => [newConversation, ...prev]);
-    setCurrentConversationId(newConversation.id);
-    setIsSidebarOpen(false); // Close sidebar on mobile after creating new chat
+  const handleNewChat = async () => {
+    try {
+      await createNewConversation("New Chat");
+      setIsSidebarOpen(false);
+    } catch (error) {
+      console.error('Failed to create new chat:', error);
+    }
   };
 
-  const handleSendMessage = (content: string) => {
+  const handleSendMessage = async (content: string) => {
     if (!content.trim()) return;
 
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      content: content.trim(),
-      role: 'user',
-      timestamp: new Date()
-    };
-
-    // Update conversation with user message
-    setConversations(prev => prev.map(conv => {
-      if (conv.id === currentConversationId) {
-        const updatedMessages = [...conv.messages, userMessage];
-        return {
-          ...conv,
-          messages: updatedMessages,
-          title: conv.messages.length === 0 ? content.slice(0, 50) + (content.length > 50 ? '...' : '') : conv.title,
-          updatedAt: new Date()
-        };
+    try {
+      if (currentConversationId) {
+        await sendChatMessage(content.trim());
+      } else {
+        await startNewChatWithMessage(content.trim());
       }
-      return conv;
-    }));
-
-    // Simulate AI response (replace with actual API call later)
-    setTimeout(() => {
-      const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        content: `I understand you're asking about: "${content}". This is a simulated response. In the future, this will connect to your Excel AI assistant.`,
-        role: 'assistant',
-        timestamp: new Date()
-      };
-
-      setConversations(prev => prev.map(conv => {
-        if (conv.id === currentConversationId) {
-          return {
-            ...conv,
-            messages: [...conv.messages, assistantMessage],
-            updatedAt: new Date()
-          };
-        }
-        return conv;
-      }));
-    }, 1000);
-
-    setPrompt("");
+      setPrompt("");
+    } catch (error) {
+      console.error('Failed to send message:', error);
+    }
   };
 
   const handleSelectConversation = (conversationId: string) => {
-    setCurrentConversationId(conversationId);
-    setIsSidebarOpen(false); // Close sidebar on mobile after selecting conversation
+    switchConversation(conversationId);
+    setIsSidebarOpen(false);
   };
 
-  const handleDeleteConversation = (conversationId: string) => {
-    setConversations(prev => prev.filter(c => c.id !== conversationId));
-    
-    // If we deleted the current conversation, select the first available one
-    if (conversationId === currentConversationId) {
-      const remaining = conversations.filter(c => c.id !== conversationId);
-      if (remaining.length > 0) {
-        setCurrentConversationId(remaining[0].id);
-      } else {
-        handleNewChat();
+  const handleDeleteConversation = async (conversationId: string) => {
+    // TODO: Implement delete conversation mutation
+    console.log('Delete conversation:', conversationId);
+    if (conversationId === currentConversationId && conversations.length > 1) {
+      const otherConversation = conversations.find(c => c.id !== conversationId);
+      if (otherConversation) {
+        switchConversation(otherConversation.id);
       }
     }
   };
+
+  // Show loading state
+  if (isLoading && conversations.length === 0) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading conversations...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">Error loading chat: {error.message}</p>
+          <Button onClick={() => window.location.reload()}>
+            Retry
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-gray-900 relative">
@@ -154,6 +115,7 @@ export default function Chat() {
           onNewChat={handleNewChat}
           onSelectConversation={handleSelectConversation}
           onDeleteConversation={handleDeleteConversation}
+          isCreatingChat={isStartingConversation}
         />
       </div>
       
@@ -179,14 +141,37 @@ export default function Chat() {
               Your AI-powered Concierge Assistant
             </p>
           </div>
+
+          {/* Connection Status */}
+          {error && (
+            <div className="text-red-500 text-sm">
+              Connection Error
+            </div>
+          )}
         </div>
 
         {/* Messages Container */}
         <div className="flex-1 min-h-0 overflow-hidden">
-          <ChatMessages 
-            messages={currentConversation?.messages || []}
-            isLoading={false}
-          />
+          {currentConversationId ? (
+            <ChatMessages 
+              messages={messages}
+              isLoading={isLoading}
+            />
+          ) : (
+            <div className="flex-1 flex items-center justify-center p-8">
+              <div className="text-center max-w-md">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                  Welcome to Excel Pilot
+                </h2>
+                <p className="text-gray-600 dark:text-gray-400 mb-6">
+                  Start a new conversation or select an existing one from the sidebar to begin chatting with your AI assistant.
+                </p>
+                <Button onClick={handleNewChat} disabled={isStartingConversation}>
+                  {isStartingConversation ? 'Creating...' : 'Start New Chat'}
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Chat Input */}
@@ -195,7 +180,12 @@ export default function Chat() {
             value={prompt}
             onChange={setPrompt}
             onSend={handleSendMessage}
-            disabled={false}
+            disabled={isSendingMessage}
+            placeholder={
+              currentConversationId 
+                ? "Type your message..." 
+                : "Start a new conversation..."
+            }
           />
         </div>
       </div>

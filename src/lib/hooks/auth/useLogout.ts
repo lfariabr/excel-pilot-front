@@ -1,7 +1,7 @@
 import { useRouter } from "next/navigation";
 import { useMutation, useApolloClient } from "@apollo/client/react";
 import { LogoutResponse } from "../../graphql/types/authTypes";
-import { LOGOUT_MUTATION } from "../../graphql/auth/queries";
+import { LOGOUT_MUTATION } from "../../graphql/auth/mutations";
 import { removeToken } from "../../utils/tokenUtils";
 
 // Logout hook
