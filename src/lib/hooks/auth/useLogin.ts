@@ -33,7 +33,7 @@ export const useLogin = () => {
           });
           
           // Redirect to dashboard or intended page
-          const redirectTo = (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('redirect')) || '/';
+          const redirectTo = (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('redirect')) || '/chat';
           router.push(redirectTo);
           return data.login;
         }

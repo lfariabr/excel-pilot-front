@@ -1,6 +1,6 @@
 import { useApolloClient } from '@apollo/client/react';
 import { useState } from 'react';
-import { useCurrentUser } from './useUsers';
+import { useCurrentUser } from '../hooks/users/useUsers';
 
 // Apollo Client Utilities Hook
 export const useApolloUtils = () => {

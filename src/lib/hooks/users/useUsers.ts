@@ -1,7 +1,7 @@
 import { useQuery } from "@apollo/client/react";
-import { GET_USERS, GET_CURRENT_USER, GET_USER_BY_ID } from "../graphql/user/queries";
-import { User, UsersResponse, UserResponse, CurrentUserResponse, UsersData } from "../graphql/types/userTypes";
-import { getToken } from "../utils/tokenUtils";
+import { GET_USERS, GET_CURRENT_USER, GET_USER_BY_ID } from "../../graphql/user/queries";
+import { User, UsersResponse, UserResponse, CurrentUserResponse, UsersData } from "../../graphql/types/userTypes";
+import { getToken } from "../../utils/tokenUtils";
 
 /**
  * Hook for fetching all users

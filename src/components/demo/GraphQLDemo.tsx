@@ -9,7 +9,7 @@ import {
 //   useCreateAgent,
   useConnectionStatus, 
   useApolloUtils 
-} from '@/lib/hooks/useGraphQL'
+} from '@/lib/utils/useGraphQL'
 import { 
   Database, 
   Users, 
@@ -23,14 +23,14 @@ import {
 } from 'lucide-react'
 
 // Users
-import { useUsers } from '@/lib/hooks/useUsers'
+import { useUsers } from '@/lib/hooks/users/useUsers'
 
 // Messages
-import { useMessages } from '@/lib/hooks/useMessages'
+import { useMessages } from '@/lib/hooks/message/useMessages'
 import { Message } from '@/lib/graphql/types/messageTypes'
 
 // Conversations
-import { useConversations } from '@/lib/hooks/useConversations'
+import { useConversations } from '@/lib/hooks/conversation/useConversations'
 import type { Conversation } from '@/lib/graphql/types/conversationTypes'
 
 export function GraphQLDemo() {

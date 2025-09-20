@@ -1,6 +1,6 @@
 import { useQuery } from "@apollo/client/react";
-import { GET_MESSAGES } from "../graphql/message/queries";
-import { MessagesData } from "../graphql/types/messageTypes";
+import { GET_MESSAGES } from "../../graphql/message/queries";
+import { MessagesData } from "../../graphql/types/messageTypes";
 
 interface UseMessagesOptions {
     conversationId?: string;
