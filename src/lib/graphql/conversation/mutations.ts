@@ -7,6 +7,7 @@ export const CREATE_CONVERSATION = gql`
             id
             content
             role
+            conversationId
             createdAt
         }
     }

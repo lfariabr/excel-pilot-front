@@ -38,17 +38,13 @@ export function GraphQLDemo() {
   // Connection status
   const { isConnected, connectionError } = useConnectionStatus()
   
-  // Data queries with type assertions
   const { data: usersData, loading: usersLoading, error: usersError, refetch: refetchUsers } = useUsers()
-  const { data: messagesData, loading: messagesLoading, error: messagesError, refetch: refetchMessages } = useMessages({ 
-    conversationId: "68bf5caac27ae372eb51be0b" // Valid ObjectId format
-  })
-  const { data: conversationsData, loading: conversationsLoading, error: conversationsError, refetch: refetchConversations } = useConversations()
-  
-  // Type assertions for GraphQL data
+  const { conversations, loading: conversationsLoading, error: conversationsError, refetch: refetchConversations } = useConversations()
   const users = (usersData as any)?.users || []
-  const messages = (messagesData as any)?.messages?.edges?.map((edge: any) => edge.node) || []
-  const conversations = (conversationsData as any)?.conversations || []
+  
+  const firstConversationId = conversations.length > 0 ? conversations[0].id : undefined;
+  
+  const { messages, loading: messagesLoading, error: messagesError, refetch: refetchMessages } = useMessages(firstConversationId)
   
   // Apollo utilities
   const { clearCache } = useApolloUtils()
@@ -199,7 +195,7 @@ export function GraphQLDemo() {
           ) : (
             <div className="space-y-2">
               <div className="text-sm text-muted-foreground">
-                No messages found for conversation "507f1f77bcf86cd799439011"
+                No messages found for conversation "68d086185565a47c069f031e"
               </div>
               <div className="text-xs text-muted-foreground">
                 This could mean the backend is not connected, the conversation doesn't exist, or there are no messages yet.
