@@ -41,6 +41,12 @@ export const useChat = (conversationId?: string) => {
 
         try {
             const newMessage = await sendMessage(currentConversationId, content);
+
+            // refetch messages after a delay to get the updated messages
+            setTimeout(() => {
+                refetchMessages();
+            }, 2000);
+            
             return newMessage;
         } catch (err) {
             console.error('Failed to send message:', err);
@@ -56,6 +62,17 @@ export const useChat = (conversationId?: string) => {
             
             if (conversation) {
                 setCurrentConversationId(conversation.id);
+
+                // refetch conversation after a delay to get the updated title
+                setTimeout(async () => {
+                    console.log('Refetching conversations for title update...');
+                    // Force a network-only refetch to bypass cache
+                    const result = await refetchConversations({ 
+                        fetchPolicy: 'network-only' 
+                    });
+                    console.log('After refetch - conversations:', result.data?.conversations);
+                }, 2000);
+
                 return conversation;
             }
         } catch (err) {

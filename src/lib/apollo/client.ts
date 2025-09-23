@@ -108,6 +108,12 @@ export const apolloClient = new ApolloClient({
             merge(existing = [], incoming) {
               return [...existing, ...incoming]
             }
+          },
+          conversations: {
+            keyArgs: false,
+            merge(existing = [], incoming) {
+              return [...existing, ...incoming]
+            }
           }
         }
       }

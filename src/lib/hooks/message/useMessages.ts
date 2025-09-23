@@ -29,7 +29,7 @@ export const useMessages = (conversationId?: string, options: UseMessagesOptions
     };
 
     return {
-        messages: data?.messages?.edges?.map(edge => edge.node) || [],
+        messages: (data?.messages?.edges?.map(edge => edge.node) || []).reverse(),
         connection: data?.messages,
         pageInfo: data?.messages?.pageInfo,
         loading,
