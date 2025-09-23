@@ -94,7 +94,7 @@ export function ChatInput({
               
               {/* Character count (optional) */}
               {value.length > 0 && (
-                <div className="absolute bottom-1 right-14 text-xs text-gray-400">
+                <div className="absolute bottom-5 right-14 text-xs text-gray-400">
                   {value.length}
                 </div>
               )}
@@ -145,9 +145,6 @@ export function ChatInput({
                   Recording...
                 </span>
               )}
-            </div>
-            <div className="flex items-center gap-2">
-              <span>Excel Pilot v0.0.7</span>
             </div>
           </div>
         </form>

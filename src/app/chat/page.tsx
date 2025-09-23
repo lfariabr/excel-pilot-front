@@ -58,7 +58,6 @@ export default function Chat() {
 
   const handleDeleteConversation = async (conversationId: string) => {
     // TODO: Implement delete conversation mutation
-    console.log('Delete conversation:', conversationId);
     if (conversationId === currentConversationId && conversations.length > 1) {
       const otherConversation = conversations.find(c => c.id !== conversationId);
       if (otherConversation) {
@@ -180,7 +179,7 @@ export default function Chat() {
             value={prompt}
             onChange={setPrompt}
             onSend={handleSendMessage}
-            disabled={isSendingMessage}
+            disabled={isSendingMessage || isStartingConversation}
             placeholder={
               currentConversationId 
                 ? "Type your message..." 

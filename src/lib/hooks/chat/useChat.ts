@@ -19,14 +19,8 @@ export const useChat = (conversationId?: string) => {
     // Start a new conversation
     const createNewConversation = async (title?: string, initialMessage?: string) => {
         try {
-            // Use the initial message as content, or a default message
-            const content = initialMessage || "Hello! How can I help you today?";
-            const newConversation = await startConversation(content);
-            
-            if (newConversation) {
-                setCurrentConversationId(newConversation.id);
-                return newConversation;
-            }
+            setCurrentConversationId(undefined);
+            return null;
         } catch (err) {
             console.error('Failed to create conversation:', err);
             throw err;

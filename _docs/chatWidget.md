@@ -31,7 +31,7 @@ Create a ChatGPT-like interface with proper scrolling behavior, real-time messag
 
 ### GraphQL Features:
 - **Apollo Client v4**: HttpLink, ErrorLink, RetryLink, AuthLink configuration
-- **Authentication Link**: JWT token handling from localStorage
+- **Authentication Link**: JWT token handling from localStorage (to be replaced by NextAuth)
 - **Error Handling**: Automatic logout on auth errors, retry logic for network failures
 - **Cache Management**: InMemoryCache with type policies for conversations and messages
 - **Real-time Updates**: Network-only refetch for title updates
