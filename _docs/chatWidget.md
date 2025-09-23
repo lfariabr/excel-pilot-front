@@ -1,4 +1,4 @@
-# Chat Widget Feature
+# Feature Breadkown: v0.0.3 and v0.0.6 - **Chat Widget Feature**
 
 ## Goal
 Create a ChatGPT-like interface with proper scrolling behavior, real-time messaging, and full GraphQL backend integration.

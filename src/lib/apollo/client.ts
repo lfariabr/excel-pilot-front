@@ -2,6 +2,7 @@ import { ApolloClient, InMemoryCache, from, ApolloLink } from '@apollo/client'
 import { HttpLink } from '@apollo/client/link/http'
 import { ErrorLink } from '@apollo/client/link/error'
 import { RetryLink } from '@apollo/client/link/retry'
+import { getSession, signOut } from 'next-auth/react'
 
 // Add router import for auth redirects
 let router: any = null
@@ -47,14 +48,20 @@ const errorLink = new ErrorLink(({ graphQLErrors, networkError }: any) => {
         extensions?.code === 'UNAUTHENTICATED'
       ) {
         if (typeof window !== 'undefined') {
-          localStorage.removeItem('excel-pilot-token')
+          // --> before nextAuth was implemented:
+          // localStorage.removeItem('excel-pilot-token')
+
           // Redirect to login page on auth errors
           if (router) {
             router.push('/login')
+          
           } else {
             // Fallback if router isn't loaded yet
             window.location.href = '/login'
           }
+
+          // --> after nextAuth was implemented:
+          // signOut({ callbackUrl: '/login' })
         }
       }
     }

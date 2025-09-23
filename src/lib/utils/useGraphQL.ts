@@ -1,3 +1,4 @@
+'use client'
 import { useApolloClient } from '@apollo/client/react';
 import { useState } from 'react';
 import { useCurrentUser } from '../hooks/users/useUsers';
@@ -32,4 +33,25 @@ export const useConnectionStatus = () => {
     isConnected,
     connectionError: error
   }
+}
+
+export const graphqlRequest = async (query: string, variables: any): Promise<any> => {
+  const response = await fetch(process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT || 'http://localhost:4000/graphql', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query,
+      variables,
+    }),
+  })
+
+  const result = await response.json()
+  
+  if (result.errors) {
+    throw new Error(result.errors[0]?.message || 'GraphQL Error')
+  }
+  
+  return result.data
 }
