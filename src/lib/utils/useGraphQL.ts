@@ -1,7 +1,8 @@
 'use client'
 import { useApolloClient } from '@apollo/client/react';
-import { useState } from 'react';
-import { useCurrentUser } from '../hooks/users/useUsers';
+import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import { gql } from '@apollo/client';
 
 // Apollo Client Utilities Hook
 export const useApolloUtils = () => {
@@ -20,23 +21,64 @@ export const useApolloUtils = () => {
   return { clearCache, refetchQueries }
 }
 
-// Connection Status Hook
+// Connection Status Hook - Updated for NextAuth
 export const useConnectionStatus = () => {
   const [isOnline, setIsOnline] = useState(true)
-  const { data, loading, error } = useCurrentUser()
-  
-  // Simple connection check based on current user query
-  const isConnected = !loading && !error && data
-  
+  const [connectionError, setConnectionError] = useState<Error | null>(null)
+  const { data: session, status } = useSession()
+  const client = useApolloClient()
+
+  // Monitor online/offline status
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true)
+    const handleOffline = () => setIsOnline(false)
+
+    window.addEventListener('online', handleOnline)
+    window.addEventListener('offline', handleOffline)
+
+    return () => {
+      window.removeEventListener('online', handleOnline)
+      window.removeEventListener('offline', handleOffline)
+    }
+  }, [])
+
+  // Test connection by making a simple query
+  useEffect(() => {
+    const testConnection = async () => {
+      if (status === 'loading') return
+
+      try {
+        // Simple query to test connection
+        await client.query({
+          query: gql`{ __typename }`,
+          fetchPolicy: 'network-only'
+        })
+        setConnectionError(null)
+      } catch (error) {
+        console.error('Connection test failed:', error)
+        setConnectionError(error as Error)
+      }
+    }
+
+    testConnection()
+  }, [client, status])
+
+  // Connection is good if we're online, authenticated (or not required), and no errors
+  const isConnected = isOnline && status !== 'loading' && !connectionError
+
   return {
     isOnline,
     isConnected,
-    connectionError: error
+    connectionError,
+    isAuthenticated: !!session?.user
   }
 }
 
-export const graphqlRequest = async (query: string, variables: any): Promise<any> => {
-  const response = await fetch(process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT || 'http://localhost:4000/graphql', {
+// Server-side GraphQL request function (works in NextAuth authorize)
+export const serverGraphqlRequest = async (query: string, variables: any): Promise<any> => {
+  const endpoint = process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT || 'http://localhost:4000/graphql'
+  
+  const response = await fetch(endpoint, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -46,6 +88,10 @@ export const graphqlRequest = async (query: string, variables: any): Promise<any
       variables,
     }),
   })
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`)
+  }
 
   const result = await response.json()
   
