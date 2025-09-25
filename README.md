@@ -44,7 +44,7 @@ UI for guiding ExcelBM Concierges on daily tasks. Built with Next.js 14 (App Rou
 - Configure NextAuth.js with JWT strategy ✅
 - Implement login/register pages with form validation ✅
 - Set up role-based access control (Admin, Concierge, Manager) ✅
-- Create session management and token refresh
+- Create session management and token refresh 
 - Add authentication middleware for protected routes
 - Implement logout functionality with session cleanup
 
