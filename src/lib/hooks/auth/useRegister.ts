@@ -1,42 +1,54 @@
-import { useRouter } from "next/navigation";
-import { useMutation, useApolloClient } from "@apollo/client/react";
-import { RegisterResponse } from "../../graphql/types/authTypes";
-import { REGISTER_MUTATION } from "../../graphql/auth/mutations";
-import { GET_CURRENT_USER } from "../../graphql/auth/queries";
-import { RegisterInput } from "../../graphql/types/authTypes";
-import { setToken } from "../../utils/tokenUtils";
+'use client';
 
-// Register hook
+import { useRouter } from "next/navigation";
+import { useApolloClient } from "@apollo/client/react";
+import { signIn } from "next-auth/react";
+import { useState } from "react";
+import { RegisterInput } from "../../graphql/types/authTypes";
+
+// Register hook - Updated to use NextAuth
 export const useRegister = () => {
     const router = useRouter();
     const client = useApolloClient();
-    const [registerMutation, { loading, error }] = useMutation<RegisterResponse>(REGISTER_MUTATION);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<Error | null>(null);
   
     const register = async (input: RegisterInput) => {
+      setLoading(true);
+      setError(null);
+      
       try {
-        const { data } = await registerMutation({
-          variables: { input }
+        // Use NextAuth signIn with register action
+        const result = await signIn('credentials', {
+          email: input.email,
+          password: input.password,
+          name: input.name,
+          action: 'register',
+          redirect: false,
         });
-  
-        if (data?.register.accessToken) {
-          setToken(data.register.accessToken);
-          
-          // Clear any stale cache and refetch current user
+
+        if (result?.error) {
+          throw new Error(result.error);
+        }
+
+        if (result?.ok) {
+          // Clear Apollo cache to ensure fresh data with new session
           await client.clearStore();
-          
-          // Prefetch the current user data with the new token
-          await client.query({
-            query: GET_CURRENT_USER,
-            fetchPolicy: 'network-only' // Force fresh fetch
-          });
           
           // Redirect to dashboard after successful registration
           router.push('/');
-          return data.register;
+          
+          return { success: true };
         }
+        
+        throw new Error('Registration failed');
       } catch (err) {
         console.error('Register error:', err);
+        const errorMessage = err instanceof Error ? err.message : 'Registration failed';
+        setError(new Error(errorMessage));
         throw err;
+      } finally {
+        setLoading(false);
       }
     };
   
