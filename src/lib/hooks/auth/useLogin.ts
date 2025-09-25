@@ -1,45 +1,54 @@
 'use client';
 
 import { useRouter } from "next/navigation";
-import { useMutation, useApolloClient } from "@apollo/client/react";
-import { LoginResponse } from "../../graphql/types/authTypes";
-import { LOGIN_MUTATION } from "../../graphql/auth/mutations";
-import { GET_CURRENT_USER } from "../../graphql/auth/queries";
+import { useApolloClient } from "@apollo/client/react";
+import { signIn } from "next-auth/react";
+import { useState } from "react";
 import { LoginInput } from "../../graphql/types/authTypes";
-import { setToken } from "../../utils/tokenUtils";
 
-// Login hook
+// Login hook - Updated to use NextAuth
 export const useLogin = () => {
     const router = useRouter();
     const client = useApolloClient();
-    const [loginMutation, { loading, error }] = useMutation<LoginResponse>(LOGIN_MUTATION);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<Error | null>(null);
   
     const login = async (input: LoginInput) => {
+      setLoading(true);
+      setError(null);
+      
       try {
-        const { data } = await loginMutation({
-          variables: { input }
+        // Use NextAuth signIn instead of direct GraphQL mutation
+        const result = await signIn('credentials', {
+          email: input.email,
+          password: input.password,
+          action: 'login',
+          redirect: false,
         });
-  
-        if (data?.login.accessToken) {
-          setToken(data.login.accessToken);
-          
-          // Clear any stale cache and refetch current user
+
+        if (result?.error) {
+          throw new Error(result.error);
+        }
+
+        if (result?.ok) {
+          // Clear Apollo cache to ensure fresh data with new session
           await client.clearStore();
-          
-          // Prefetch the current user data with the new token
-          await client.query({
-            query: GET_CURRENT_USER,
-            fetchPolicy: 'network-only' // Force fresh fetch
-          });
           
           // Redirect to dashboard or intended page
           const redirectTo = (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('redirect')) || '/chat';
           router.push(redirectTo);
-          return data.login;
+          
+          return { success: true };
         }
+        
+        throw new Error('Login failed');
       } catch (err) {
         console.error('Login error:', err);
+        const errorMessage = err instanceof Error ? err.message : 'Login failed';
+        setError(new Error(errorMessage));
         throw err;
+      } finally {
+        setLoading(false);
       }
     };
   

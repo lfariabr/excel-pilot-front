@@ -1,39 +1,63 @@
-import { ApolloClient, InMemoryCache, from, ApolloLink } from '@apollo/client'
+import { ApolloClient, InMemoryCache, from, ApolloLink, Observable } from '@apollo/client'
 import { HttpLink } from '@apollo/client/link/http'
 import { ErrorLink } from '@apollo/client/link/error'
 import { RetryLink } from '@apollo/client/link/retry'
 import { getSession, signOut } from 'next-auth/react'
-
-// Add router import for auth redirects
-let router: any = null
-if (typeof window !== 'undefined') {
-  import('next/router').then((routerModule) => {
-    router = routerModule.default
-  })
-}
 
 // --- HTTP link ---
 const httpLink = new HttpLink({
   uri: process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT || 'http://localhost:4000/graphql',
 })
 
-// --- Auth link (no setContext, no deprecations) ---
+// --- Auth link (NextAuth session-based) ---
 const authLink = new ApolloLink((operation, forward) => {
+  return new Observable(observer => {
+    // Get token from NextAuth session instead of localStorage
+    getSession().then((session: any) => {
+      const token = session?.accessToken
 
-  // Get token from localStorage (this will be updated when NextAuth is implemented!!!)
-  const token = typeof window !== 'undefined' ? localStorage.getItem('excel-pilot-token') : null
+      operation.setContext(({ headers = {} }: { headers?: Record<string, string> }) => ({
+        headers: {
+          ...headers,
+          authorization: token ? `Bearer ${token}` : '',
+          'Content-Type': 'application/json',
+        },
+      }))
+      
+      // Subscribe to the forward operation and pass results
+      const subscription = forward(operation).subscribe({
+        next: observer.next.bind(observer),
+        error: observer.error.bind(observer),
+        complete: observer.complete.bind(observer),
+      })
 
-  operation.setContext(({ headers = {} }: { headers?: Record<string, string> }) => ({
-    headers: {
-      ...headers,
-      authorization: token ? `Bearer ${token}` : '',
-      'Content-Type': 'application/json',
-    },
-  }))
-  return forward(operation)
+      return () => {
+        subscription.unsubscribe()
+      }
+    }).catch(() => {
+      // If session fails, continue without token
+      operation.setContext(({ headers = {} }: { headers?: Record<string, string> }) => ({
+        headers: {
+          ...headers,
+          'Content-Type': 'application/json',
+        },
+      }))
+      
+      // Subscribe to the forward operation and pass results
+      const subscription = forward(operation).subscribe({
+        next: observer.next.bind(observer),
+        error: observer.error.bind(observer),
+        complete: observer.complete.bind(observer),
+      })
+
+      return () => {
+        subscription.unsubscribe()
+      }
+    })
+  })
 })
 
-// --- Error link (replaces onError) ---
+// --- Error link (NextAuth-based logout) ---
 const errorLink = new ErrorLink(({ graphQLErrors, networkError }: any) => {
   if (graphQLErrors?.length) {
     for (const { message, locations, path, extensions } of graphQLErrors) {
@@ -48,20 +72,8 @@ const errorLink = new ErrorLink(({ graphQLErrors, networkError }: any) => {
         extensions?.code === 'UNAUTHENTICATED'
       ) {
         if (typeof window !== 'undefined') {
-          // --> before nextAuth was implemented:
-          // localStorage.removeItem('excel-pilot-token')
-
-          // Redirect to login page on auth errors
-          if (router) {
-            router.push('/login')
-          
-          } else {
-            // Fallback if router isn't loaded yet
-            window.location.href = '/login'
-          }
-
-          // --> after nextAuth was implemented:
-          // signOut({ callbackUrl: '/login' })
+          // Use NextAuth signOut instead of localStorage manipulation
+          signOut({ callbackUrl: '/login' })
         }
       }
     }

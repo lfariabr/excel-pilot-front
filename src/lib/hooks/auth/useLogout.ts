@@ -1,12 +1,11 @@
-import { useRouter } from "next/navigation";
 import { useMutation, useApolloClient } from "@apollo/client/react";
 import { LogoutResponse } from "../../graphql/types/authTypes";
 import { LOGOUT_MUTATION } from "../../graphql/auth/mutations";
 import { removeToken } from "../../utils/tokenUtils";
+import { signOut } from "next-auth/react";
 
 // Logout hook
 export const useLogout = () => {
-    const router = useRouter();
     const client = useApolloClient();
     const [logoutMutation, { loading }] = useMutation<LogoutResponse>(LOGOUT_MUTATION);
   
@@ -20,13 +19,13 @@ export const useLogout = () => {
         
         // Redirect to login
         if (typeof window !== 'undefined') {
-          window.location.href = '/login';
+          signOut();
         }
       } catch (err) {
         // Even if server logout fails, clear local token and cache
         removeToken();
         await client.clearStore();
-        router.push('/login');
+        signOut();
       }
     };
   

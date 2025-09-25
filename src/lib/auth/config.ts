@@ -1,7 +1,6 @@
 import { NextAuthOptions } from 'next-auth'
 import { JWT } from 'next-auth/jwt'
 import CredentialsProvider from 'next-auth/providers/credentials'
-import { graphqlRequest } from '../utils/useGraphQL'
 
 // Types for our authentication
 interface User {
@@ -11,36 +10,67 @@ interface User {
   role: string
 }
 
-interface LoginResponse {
-  user: User
-  token: string
+// Server-side GraphQL request function (works in NextAuth authorize)
+async function serverGraphqlRequest(query: string, variables: any): Promise<any> {
+  const endpoint = process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT || 'http://localhost:4000/graphql'
+  
+  console.log('🔍 GraphQL Debug - Endpoint:', endpoint)
+  console.log('🔍 GraphQL Debug - Variables:', variables)
+  
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query,
+      variables,
+    }),
+  })
+
+  console.log('🔍 Response status:', response.status)
+  
+  if (!response.ok) {
+    const errorText = await response.text()
+    console.log('🔍 Error response:', errorText)
+    throw new Error(`HTTP error! status: ${response.status}, body: ${errorText}`)
+  }
+
+  const result = await response.json()
+  console.log('🔍 GraphQL result:', result)
+  
+  if (result.errors) {
+    throw new Error(result.errors[0]?.message || 'GraphQL Error')
+  }
+  
+  return result.data
 }
 
 // GraphQL mutations for authentication
 const LOGIN_MUTATION = `
-  mutation Login($email: String!, $password: String!) {
-    login(email: $email, password: $password) {
+  mutation Login($input: LoginInput!) {
+    login(input: $input) {
       user {
         id
         email
         name
         role
       }
-      token
+      accessToken
     }
   }
 `
 
 const REGISTER_MUTATION = `
-  mutation Register($email: String!, $password: String!, $name: String!) {
-    register(email: $email, password: $password, name: $name) {
+  mutation Register($input: RegisterInput!) {
+    register(input: $input) {
       user {
         id
         email
         name
         role
       }
-      token
+      accessToken
     }
   }
 `
@@ -63,32 +93,40 @@ export const authOptions: NextAuthOptions = {
 
         try {
           let data: any
+          let accessToken: string
           
           if (credentials.action === 'register') {
             if (!credentials.name) {
               throw new Error('Name is required for registration')
             }
-            data = await graphqlRequest(REGISTER_MUTATION, {
-              email: credentials.email,
-              password: credentials.password,
-              name: credentials.name,
+            const result = await serverGraphqlRequest(REGISTER_MUTATION, {
+              input: {
+                email: credentials.email,
+                password: credentials.password,
+                name: credentials.name,
+                role: 'casual',
+              },
             })
-            data = data.register
+            data = result.register.user
+            accessToken = result.register.accessToken
           } else {
-            data = await graphqlRequest(LOGIN_MUTATION, {
-              email: credentials.email,
-              password: credentials.password,
+            const result = await serverGraphqlRequest(LOGIN_MUTATION, {
+              input: {
+                email: credentials.email,
+                password: credentials.password,
+              },
             })
-            data = data.login
+            data = result.login.user
+            accessToken = result.login.accessToken
           }
-
-          if (data?.user && data?.token) {
+          
+          if (data && accessToken) {
             return {
-              id: data.user.id,
-              email: data.user.email,
-              name: data.user.name,
-              role: data.user.role,
-              accessToken: data.token,
+              id: data.id,
+              email: data.email,
+              name: data.name,
+              role: data.role,
+              accessToken: accessToken,
             }
           }
           

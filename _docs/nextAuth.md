@@ -42,6 +42,18 @@ npm install next-auth
 1. Create a new file `src/lib/auth/config.ts`
 2. Create NextAuth API routes in `src/pages/api/auth/[...nextauth]`
 3. Create a new file `src/components/providers/SessionProvider.tsx`
-
-**PENDING:**
 4. Update Apollo Client to use NextAuth session (`getSession` and `signOut`)
+Previous (localStorage) Flow:
+```bash
+Login Form → GraphQL Mutation → Store JWT in localStorage → Apollo reads from localStorage
+```
+
+NextAuth Flow:
+```bash
+Login Form → NextAuth signIn → NextAuth handles GraphQL → JWT stored in NextAuth session → Apollo reads from session
+```
+5. Update useLogin hook to use NextAuth signIn
+
+*PENDING:*
+6. Update useRegister hook
+7. Update useLogout hook
