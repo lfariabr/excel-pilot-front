@@ -37,7 +37,10 @@ NextAuth.js is a full authentication solution for Next.js applications. It provi
 npm install next-auth
 ```
 
-### Configuration
+---
+
+### Tasks Breakdown
+**Part 1: Backend Setup**
 
 1. Create a new file `src/lib/auth/config.ts`
 2. Create NextAuth API routes in `src/pages/api/auth/[...nextauth]`
@@ -53,7 +56,23 @@ NextAuth Flow:
 Login Form → NextAuth signIn → NextAuth handles GraphQL → JWT stored in NextAuth session → Apollo reads from session
 ```
 5. Update useLogin hook to use NextAuth signIn
+6. Update src/lib/auth/config.ts to use a server-side GraphQL request function
+7. Update useRegister hook
+8. Update useLogout hook
 
-*PENDING:*
-6. Update useRegister hook
-7. Update useLogout hook
+---
+**Part 2: Frontend Setup**
+
+9. Update /login page using SignInForm component
+10. Update /register page using SignUpForm component
+11. Implement middleware to protect routes
+12. Set up role-based access control (useRoleAccess hook)
+13. Update navigation component to show/hide links based on user role
+
+---
+
+**NEXT STEPS**
+
+Test the auth flow - most important remaining task. Done, but gotta go through the flow a few times to make sure it's working.
+Clean up logout hook - Remove legacy localStorage code
+Add session timeout - Optional security enhancement
