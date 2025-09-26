@@ -4,11 +4,10 @@ import * as React from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useSession, signOut } from "next-auth/react"
-import { Menu, X, Home, BarChart3, Search, MessageSquare, Settings, Key, LogOut, Users, Shield } from "lucide-react"
+import { Menu, X, Key, LogOut} from "lucide-react"
 import { cn } from "@/lib/utils/cnUtils"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { useRoleAccess } from "@/lib/hooks/auth/useRoleAccess"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,19 +16,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-
-const navigationItems = [
-  { href: "/", label: "Dashboard", icon: Home, roles: ['admin', 'concierge', 'manager', 'casual'] },
-  { href: "/tasks", label: "Tasks", icon: BarChart3, roles: ['admin', 'concierge', 'manager'] },
-  { href: "/search", label: "Search", icon: Search, roles: ['admin', 'concierge', 'manager', 'casual'] },
-  { href: "/chat", label: "Ask AI", icon: MessageSquare, roles: ['admin', 'concierge', 'manager', 'casual'] },
-  { href: "/settings", label: "Settings", icon: Settings, roles: ['admin', 'concierge', 'manager', 'casual'] },
-]
-
-const adminItems = [
-  { href: "/admin/users", label: "User Management", icon: Users, roles: ['admin'] },
-  { href: "/admin/system", label: "System Settings", icon: Shield, roles: ['admin', 'concierge'] },
-]
+import { useRoleAccess } from "@/lib/hooks/auth/useRoleAccess"
+import { navigationItems, adminItems } from "@/components/utils/navFilter"
 
 export function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false)
