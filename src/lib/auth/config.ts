@@ -45,7 +45,7 @@ async function serverGraphqlRequest(query: string, variables: any): Promise<any>
   
   return result.data
 }
-
+// TODO: Can't we use the same mutations from the graphql folder?
 // GraphQL mutations for authentication
 const LOGIN_MUTATION = `
   mutation Login($input: LoginInput!) {
