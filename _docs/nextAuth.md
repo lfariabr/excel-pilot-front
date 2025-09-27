@@ -94,6 +94,51 @@ jwt: (token, user, account, profile, isNewUser) => {
 
 > Follow up question: is the ***config*** setup correct for jwt? Because I see we're importing jwt from 'next-auth/jwt' instead of using user's token.
 
+#### 4. Callbacks
+- Hooks to control behaviour
+- Example: include backend JWT in the session so Apollo can use it.
+```typescript
+callbacks: {
+  async jwt({ token, user, account, profile, isNewUser }) {
+    if (user) {
+      token.accessToken = user.accessToken
+    }
+    return token
+  },
+  async session({ session, user, token }) {
+    session.user = user
+    session.accessToken = token.accessToken
+    return session
+  },
+},
+```
+
+> Follow up question: JWT from backend or frontend?! 
+
+#### 5. Client API
+- signIn("credentials", { email, password }) → logs user in
+- signOut() → logs user out
+- useSession() → get current session state
+
+> Follow up question: has relation to boiler plate of classes? export function signIn comming from node_modules/next-auth/src/react/index.tsx
+
+#### 6. Middleware
+- File: src/middleware.ts
+- Protects routes on the server side (redirects unauthenticated users)
+```typescript
+export { default } from "next-auth/middleware"
+export const config = { matcher: ["/chat", "/dashboard"]}
+```
+
+> Follow up question: where the f#*@ is this being used at our code? If it is, where?
+
+--- 
+
+#### next steps:
+- big picture flow
+- what we should do next at code
+
+
 ### Installation
 
 ```bash
