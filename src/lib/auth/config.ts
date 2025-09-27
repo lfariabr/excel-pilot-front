@@ -1,7 +1,7 @@
 import { NextAuthOptions } from 'next-auth'
 import { JWT } from 'next-auth/jwt'
 import CredentialsProvider from 'next-auth/providers/credentials'
-import Github from 'next-auth/providers/github'
+import GithubProvider from 'next-auth/providers/github'
 
 // Types for our authentication
 interface User {
@@ -78,6 +78,10 @@ const REGISTER_MUTATION = `
 
 export const authOptions: NextAuthOptions = {
   providers: [
+    GithubProvider({
+      clientId: process.env.GITHUB_CLIENT_ID!,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+    }),
     CredentialsProvider({
       id: 'credentials',
       name: 'credentials',

@@ -3,12 +3,15 @@ import React, { useState } from "react";
 import { useLogin } from "@/lib/hooks/auth/useLogin";
 import { Button } from "@/components/ui/button";
 import { Loading } from "@/components/ui/loading";
+import { signIn } from "next-auth/react";
+import Image from "next/image";
 
 export default function SignInForm() {
     // React Hooks
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [localError, setLocalError] = useState<string | null>(null);
+    const [socialLoading, setSocialLoading] = useState(false);
     
     // Auth hook
     const { login, loading, error } = useLogin();
@@ -74,6 +77,40 @@ export default function SignInForm() {
                 ) : (
                     'Sign in'
                 )}
+            </Button>
+
+            {/* Separator */}
+            <div className="relative my-4">
+                <div className="absolute inset-0 flex items-center"><span className="w-full border-t" /></div>
+                <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-white px-2 text-gray-500">Or continue with</span>
+                </div>
+            </div>
+
+            {/* Social login: GitHub */}
+            <Button 
+                type="button"
+                variant="outline"
+                disabled={socialLoading || loading}
+                onClick={async () => {
+                    try {
+                        setSocialLoading(true);
+                        await signIn('github',  {
+                            callbackUrl: '/'})
+                        } finally {
+                            setSocialLoading(false);
+                        }
+                    }}
+            >
+                {socialLoading ? (
+                    <>
+                        <Loading variant="spinner" size="sm" className="mr-2" />
+                        Redirecting to GitHub...
+                        </>
+                ) : (
+                    'Sign in with GitHub'
+                )}
+                <Image src="/github-mark.svg" alt="GitHub" width={24} height={24} />
             </Button>
         </form>
     );

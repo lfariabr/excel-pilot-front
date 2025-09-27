@@ -68,7 +68,8 @@ providers: [
 ]
 ```
 
-> Follow up question: how to add Google?
+> Follow up question: how to add Google or Github providers?
+> R: 
 
 #### 2. Session
 - Session = user's login state
@@ -78,6 +79,7 @@ providers: [
   - Server → const session = await getSession()
 
 > Follow up question: why don't we use 'getServerSession' here and only 'getSession'?
+> R: 
 
 #### 3. JWT
 - NextAuth can issue JWTs or we can blug in our own JWT issuer (like my backend already does - generates on login)
@@ -93,7 +95,7 @@ jwt: (token, user, account, profile, isNewUser) => {
 ```
 
 > Follow up question: is the ***config*** setup correct for jwt? Because I see we're importing jwt from 'next-auth/jwt' instead of using user's token.
-
+> R: 
 #### 4. Callbacks
 - Hooks to control behaviour
 - Example: include backend JWT in the session so Apollo can use it.
@@ -112,7 +114,8 @@ callbacks: {
   },
 },
 ```
-> Follow up question: JWT from backend or frontend?! 
+> Follow up question: Are currently using JWT from backend or frontend?! 
+> R: 
 
 #### 5. Client API
 - signIn("credentials", { email, password }) → logs user in
@@ -120,6 +123,7 @@ callbacks: {
 - useSession() → get current session state
 
 > Follow up question: has relation to boiler plate of classes? export function signIn comming from node_modules/next-auth/src/react/index.tsx
+> R: 
 
 #### 6. Middleware
 - File: src/middleware.ts
@@ -130,6 +134,7 @@ export const config = { matcher: ["/chat", "/dashboard"]}
 ```
 
 > Follow up question: where the f#*@ is this being used at our code? If it is, where?
+> R: 
 
 --- 
 
@@ -159,15 +164,15 @@ npm install next-auth
 2. Create NextAuth API routes in `src/pages/api/auth/[...nextauth]`
 3. Create a new file `src/components/providers/SessionProvider.tsx`
 4. Update Apollo Client to use NextAuth session (`getSession` and `signOut`)
-Previous (localStorage) Flow:
-```bash
-Login Form → GraphQL Mutation → Store JWT in localStorage → Apollo reads from localStorage
-```
+  Previous (localStorage) Flow:
+  ```bash
+  Login Form → GraphQL Mutation → Store JWT in localStorage → Apollo reads from localStorage
+  ```
 
-NextAuth Flow:
-```bash
-Login Form → NextAuth signIn → NextAuth handles GraphQL → JWT stored in NextAuth session → Apollo reads from session
-```
+  NextAuth Flow:
+  ```bash
+  Login Form → NextAuth signIn → NextAuth handles GraphQL → JWT stored in NextAuth session → Apollo reads from session
+  ```
 5. Update useLogin hook to use NextAuth signIn
 6. Update src/lib/auth/config.ts to use a server-side GraphQL request function
 7. Update useRegister hook
@@ -184,8 +189,51 @@ Login Form → NextAuth signIn → NextAuth handles GraphQL → JWT stored in Ne
 
 ---
 
-**NEXT STEPS**
+### 🦺 PENDING
+**Part 3: Testing & Cleanup**
 
-Test the auth flow - most important remaining task. Done, but gotta go through the flow a few times to make sure it's working.
-Clean up logout hook - Remove legacy localStorage code
-Add session timeout - Optional security enhancement
+14. Test the auth flow - most important remaining task. Done, but gotta go through the flow a few times to make sure it's working.
+15. Clean up logout hook - Remove legacy localStorage code
+16. Add session timeout - Optional security enhancement
+
+---
+
+### v0.0.4 What's Missing/Enhanceable
+**FULLY IMPLEMENTED:**
+  ✅ NextAuth.js JWT configuration
+  ✅ Login/Register pages with validation
+  ✅ Role-based access control (useRoleAccess hook)
+  ✅ Authentication middleware
+  ✅ Navigation with role-based menu items
+  ✅ Session management (24h expiry)
+  ✅ Basic logout functionality
+
+**OPTIONAL ENHANCEMENTS (Medium Priority):**
+1. Session Inactivity Timeout
+- Current: 24h session expiry
+- Enhancement: Auto-logout after 1-2 hours of inactivity
+- Benefit: Better security for shared/public computers
+2. Logout Hook Cleanup
+- Issue: Still references old removeToken() and GraphQL mutations
+- Fix: Simplify to use only NextAuth signOut()
+- Benefit: Cleaner code, no legacy dependencies
+3. Session Refresh Warnings
+- Enhancement: Show "Session expires in 5 minutes" warning
+- Benefit: Better UX, prevents unexpected logouts- 
+
+**PRODUCTION READY FEATURES (Low Priority):**
+4. Enhanced Error Handling
+- Custom 401/403 error pages
+- Better error messages for auth failures
+- Retry mechanisms for network issues
+5. Security Enhancements
+- CSRF protection verification
+- Rate limiting on login attempts
+- Session fixation protection
+
+**TESTING (High Priority):**
+6. End-to-End Testing
+- Test: Login → Access protected route → Logout flow
+- Test: Role-based navigation visibility
+- Test: Session persistence across browser refresh
+- Test: Middleware redirects for unauthenticated users
