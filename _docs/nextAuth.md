@@ -112,7 +112,6 @@ callbacks: {
   },
 },
 ```
-
 > Follow up question: JWT from backend or frontend?! 
 
 #### 5. Client API
@@ -134,10 +133,16 @@ export const config = { matcher: ["/chat", "/dashboard"]}
 
 --- 
 
-#### next steps:
-- big picture flow
-- what we should do next at code
+### Big Picture Flow
 
+1. User submits login form
+2. NextAuth calls backend login mutation (Credentials Provider)
+3. Backend returns { user, accessToken }
+4. NextAuth stores token in cookies + session
+5. Frontend (Apollo Client) pulls accessToken from NextAuth session
+6. Protected routes are only acessible if session exists
+
+---
 
 ### Installation
 

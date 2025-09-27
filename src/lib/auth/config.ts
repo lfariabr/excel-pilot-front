@@ -1,6 +1,7 @@
 import { NextAuthOptions } from 'next-auth'
 import { JWT } from 'next-auth/jwt'
 import CredentialsProvider from 'next-auth/providers/credentials'
+import Github from 'next-auth/providers/github'
 
 // Types for our authentication
 interface User {
