@@ -1,4 +1,4 @@
-import { ApolloClient, InMemoryCache, from, ApolloLink, Observable } from '@apollo/client'
+import { ApolloClient, InMemoryCache, ApolloLink } from '@apollo/client'
 import { HttpLink } from '@apollo/client/link/http'
 import { ErrorLink } from '@apollo/client/link/error'
 import { RetryLink } from '@apollo/client/link/retry'
@@ -86,7 +86,7 @@ const retryLink = new RetryLink({
 
 // Apollo Client instance
 export const apolloClient = new ApolloClient({
-  link: from([
+  link: ApolloLink.from([
     errorLink,
     retryLink,
     authLink,

@@ -38,7 +38,7 @@ async function serverGraphqlRequest(query: string, variables: any): Promise<any>
   }
 
   const result = await response.json()
-  // console.log('🔍 GraphQL result:', result)
+  console.log('🔍 GraphQL result:', result)
   
   if (result.errors) {
     throw new Error(result.errors[0]?.message || 'GraphQL Error')
@@ -105,6 +105,7 @@ export const authOptions: NextAuthOptions = {
           let data: any
           let accessToken: string
           
+          // Register new user
           if (credentials.action === 'register') {
             if (!credentials.name) {
               throw new Error('Name is required for registration')
@@ -120,6 +121,7 @@ export const authOptions: NextAuthOptions = {
             data = result.register.user
             accessToken = result.register.accessToken
           } else {
+            // Login existing user
             const result = await serverGraphqlRequest(LOGIN_MUTATION, {
               input: {
                 email: credentials.email,

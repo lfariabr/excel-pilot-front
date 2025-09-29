@@ -86,7 +86,7 @@ providers: [
 > ✅ R: At Apollo auth link we prefer async setContext over .then...catch... 
 
 #### 3. JWT
-- NextAuth can issue JWTs or we can blug in our own JWT issuer (like my backend already does - generates on login)
+- NextAuth can issue JWTs or we can plug in our own JWT issuer (like my backend already does - generates on login)
 - We can customize what goes inside the token via callback.jwt
 - Example:
 ```typescript
@@ -122,8 +122,13 @@ callbacks: {
   },
 },
 ```
+
 > Follow up question: Are currently using JWT from backend or frontend?! 
-> R: 
+> R: Flow:
+> - Backend returns JWT: In *src/lib/auth/config.ts authorize()*, we call the GraphQL `login`/`register` mutations and receive `accessToken` from the backend (`result.login.accessToken` / `result.register.accessToken`).
+> - Stored in NextAuth JWT: Callback *jwt()* saves it on `token.accessToken`.
+> - Exposed in session: Callback *session()* copies it to `session.accessToken`.
+> - Used by Apollo: *src/lib/apollo/client.ts* reads `session.accessToken` via `getSession()` and sets `Authorization: Bearer <token>` on every request.
 
 #### 5. Client API
 - signIn("credentials", { email, password }) → logs user in
