@@ -3,6 +3,8 @@ import { HttpLink } from '@apollo/client/link/http'
 import { ErrorLink } from '@apollo/client/link/error'
 import { RetryLink } from '@apollo/client/link/retry'
 import { getSession, signOut } from 'next-auth/react'
+import { SetContextLink } from '@apollo/client/link/context'
+
 
 // --- HTTP link ---
 const httpLink = new HttpLink({
@@ -10,51 +12,30 @@ const httpLink = new HttpLink({
 })
 
 // --- Auth link (NextAuth session-based) ---
-const authLink = new ApolloLink((operation, forward) => {
-  return new Observable(observer => {
-    // Get token from NextAuth session instead of localStorage
-    getSession().then((session: any) => {
-      const token = session?.accessToken
+const authLink = new SetContextLink(async (_operation, prevContext) => {
+  try {
+    const session: any = await getSession()
+    const token = session?.accessToken
 
-      operation.setContext(({ headers = {} }: { headers?: Record<string, string> }) => ({
-        headers: {
-          ...headers,
-          authorization: token ? `Bearer ${token}` : '',
-          'Content-Type': 'application/json',
-        },
-      }))
-      
-      // Subscribe to the forward operation and pass results
-      const subscription = forward(operation).subscribe({
-        next: observer.next.bind(observer),
-        error: observer.error.bind(observer),
-        complete: observer.complete.bind(observer),
-      })
+    // Read existing headers from the operation’s context
+    const prevHeaders = (prevContext as any)?.headers ?? {}
 
-      return () => {
-        subscription.unsubscribe()
-      }
-    }).catch(() => {
-      // If session fails, continue without token
-      operation.setContext(({ headers = {} }: { headers?: Record<string, string> }) => ({
-        headers: {
-          ...headers,
-          'Content-Type': 'application/json',
-        },
-      }))
-      
-      // Subscribe to the forward operation and pass results
-      const subscription = forward(operation).subscribe({
-        next: observer.next.bind(observer),
-        error: observer.error.bind(observer),
-        complete: observer.complete.bind(observer),
-      })
-
-      return () => {
-        subscription.unsubscribe()
-      }
-    })
-  })
+    return {
+      headers: {
+        ...prevHeaders,
+        ...(token ? { authorization: `Bearer ${token}` } : {}),
+        'Content-Type': 'application/json',
+      },
+    }
+  } catch {
+    const prevHeaders = (prevContext as any)?.headers ?? {}
+    return {
+      headers: {
+        ...prevHeaders,
+        'Content-Type': 'application/json',
+      },
+    }
+  }
 })
 
 // --- Error link (NextAuth-based logout) ---

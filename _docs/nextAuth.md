@@ -69,7 +69,7 @@ providers: [
 ```
 
 > Follow up question: how to add Google or Github providers?
-> R: 
+> ✅ R: Add the providers to **authOptions.providers** in `src/lib/auth/config.ts` and set env vars
 
 #### 2. Session
 - Session = user's login state
@@ -79,7 +79,11 @@ providers: [
   - Server → const session = await getSession()
 
 > Follow up question: why don't we use 'getServerSession' here and only 'getSession'?
-> R: 
+> ✅ R: **getSession** is used for *Client Components* like hooks (login, logout), pages, components...
+> ✅ R: **getServerSession** is used for *Server Components* like middleware-like checks, route handlers, api fetchs... we don't have it just yet, but can add for the chat history!!!
+
+> Follow up question: at client.ts, we're using getSession.then...catch... is this the best approach? Normaly we use async/await.
+> ✅ R: At Apollo auth link we prefer async setContext over .then...catch... 
 
 #### 3. JWT
 - NextAuth can issue JWTs or we can blug in our own JWT issuer (like my backend already does - generates on login)
@@ -95,7 +99,11 @@ jwt: (token, user, account, profile, isNewUser) => {
 ```
 
 > Follow up question: is the ***config*** setup correct for jwt? Because I see we're importing jwt from 'next-auth/jwt' instead of using user's token.
-> R: 
+> R: Yes, it's correct. The import is only for typescript types in the callbacks, not for generating the token. The config uses backend-issued `accessToken` and stores it inside NextAuth-managed session.
+
+> Follow up question: are we using JWT from backend or frontend?
+> R: We're using backend-issued JWT for API authorization. NextAuth's JWT is the session container that stores the `accessToken` and delivers to Apollo.
+
 #### 4. Callbacks
 - Hooks to control behaviour
 - Example: include backend JWT in the session so Apollo can use it.
@@ -220,6 +228,10 @@ npm install next-auth
 3. Session Refresh Warnings
 - Enhancement: Show "Session expires in 5 minutes" warning
 - Benefit: Better UX, prevents unexpected logouts- 
+4. NextAuth JWT configuration
+- Strengthen typing: Extend NextAuth types to include accessToken, id, and role on Session and JWT to avoid any.
+- OAuth provider parity: If you later use GitHub/Google for real auth, map their account.access_token similarly into token.accessToken in callbacks.jwt.
+- Refresh handling: If your backend issues refresh tokens, store them similarly and implement refresh logic in the JWT callback.
 
 **PRODUCTION READY FEATURES (Low Priority):**
 4. Enhanced Error Handling

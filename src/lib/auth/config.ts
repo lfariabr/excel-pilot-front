@@ -38,7 +38,7 @@ async function serverGraphqlRequest(query: string, variables: any): Promise<any>
   }
 
   const result = await response.json()
-  console.log('🔍 GraphQL result:', result)
+  // console.log('🔍 GraphQL result:', result)
   
   if (result.errors) {
     throw new Error(result.errors[0]?.message || 'GraphQL Error')
@@ -46,7 +46,12 @@ async function serverGraphqlRequest(query: string, variables: any): Promise<any>
   
   return result.data
 }
+
 // TODO: Can't we use the same mutations from the graphql folder?
+// Recommended: Shared string source
+// - Create a shared module exporting plain mutation strings, e.g. src/lib/graphql/shared/authDocuments.ts:
+// - Export LOGIN_MUTATION_STR and REGISTER_MUTATION_STR as template strings.
+
 // GraphQL mutations for authentication
 const LOGIN_MUTATION = `
   mutation Login($input: LoginInput!) {
