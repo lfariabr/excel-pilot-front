@@ -22,6 +22,10 @@ export const config = {
      * - favicon.ico (favicon file)
      * - public folder
      */
-    "/((?!api/auth|_next/static|_next/image|favicon.ico|public).*)",
+    // "/((?!api/auth|_next/static|_next/image|favicon.ico|public).*)",
+    
+    // Match all request paths except for the ones starting with:
+    "/chat/:path*", "/dashboard/:path*"
+    
   ],
 }

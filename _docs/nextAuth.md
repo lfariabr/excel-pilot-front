@@ -134,9 +134,10 @@ callbacks: {
 - signIn("credentials", { email, password }) → logs user in
 - signOut() → logs user out
 - useSession() → get current session state
+These are plain functions/hooks exported by next-auth/react
 
 > Follow up question: has relation to boiler plate of classes? export function signIn comming from node_modules/next-auth/src/react/index.tsx
-> - ✅ R: 
+> - ✅ R: No, These are framework-provided functions/hooks, wired to NextAuth config and API route.
 
 #### 6. Middleware
 - File: src/middleware.ts
@@ -147,7 +148,7 @@ export const config = { matcher: ["/chat", "/dashboard"]}
 ```
 
 > Follow up question: where the f#*@ is this being used at our code? If it is, where?
-> - ✅ R: 
+> - ✅ R: We have it incorrectly placed at `src/lib/middleware.ts`. It should be at `src/middleware.ts` - fixed and changed matcher to `/chat/:path*`, `/dashboard/:path*`. rather than aggresive version
 
 --- 
 
