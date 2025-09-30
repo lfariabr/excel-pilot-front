@@ -43,6 +43,17 @@ export function ChatSidebar({
     return date.toLocaleDateString();
   };
 
+  // Strip markdown syntax from text
+  const stripMarkdown = (text: string): string => {
+    return text
+      .replace(/^#{1,6}\s+/gm, '')  // Remove heading markers (###, ##, #)
+      .replace(/\*\*(.+?)\*\*/g, '$1')  // Remove bold
+      .replace(/\*(.+?)\*/g, '$1')  // Remove italic
+      .replace(/`(.+?)`/g, '$1')  // Remove inline code
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')  // Remove links but keep text
+      .trim();
+  };
+
   const groupConversationsByDate = (conversations: Conversation[]) => {
     const groups: { [key: string]: Conversation[] } = {};
     
@@ -103,7 +114,7 @@ export function ChatSidebar({
                     <MessageSquare className="w-4 h-4 text-gray-400 dark:text-gray-500 flex-shrink-0" />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                        {conversation.title || 'Untitled Chat'}
+                        {stripMarkdown(conversation.title || 'Untitled Chat')}
                       </p>
                       {conversation.summary && (
                         <p className="text-xs text-gray-500 dark:text-gray-400 truncate">

@@ -6,8 +6,17 @@ import { ChatInput } from "@/components/chat/ChatInput";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import { useChat } from "@/lib/hooks/chat";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function Chat() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  
+  // All hooks MUST come before any conditional returns
+  const [prompt, setPrompt] = useState("");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  
   const {
     conversations,
     messages,
@@ -19,13 +28,29 @@ export default function Chat() {
     createNewConversation,
     sendChatMessage,
     switchConversation,
-    startNewChatWithMessage
+    startNewChatWithMessage,
+    refetchConversations,
   } = useChat();
-  
-  const [prompt, setPrompt] = useState("");
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const currentConversation = conversations.find(c => c.id === currentConversationId);
+
+  // NOW you can do conditional checks and early returns
+  // Check authentication status
+  if (status === 'loading') {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Checking authentication...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (status === 'unauthenticated') {
+    router.push('/login');
+    return null;
+  }
 
   const handleNewChat = async () => {
     try {
@@ -84,7 +109,7 @@ export default function Chat() {
       <div className="flex h-screen items-center justify-center">
         <div className="text-center">
           <p className="text-red-600 mb-4">Error loading chat: {error.message}</p>
-          <Button onClick={() => window.location.reload()}>
+          <Button onClick={() => refetchConversations()}>
             Retry
           </Button>
         </div>
