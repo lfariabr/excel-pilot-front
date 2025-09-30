@@ -79,11 +79,11 @@ providers: [
   - Server → const session = await getSession()
 
 > Follow up question: why don't we use 'getServerSession' here and only 'getSession'?
-> ✅ R: **getSession** is used for *Client Components* like hooks (login, logout), pages, components...
-> ✅ R: **getServerSession** is used for *Server Components* like middleware-like checks, route handlers, api fetchs... we don't have it just yet, but can add for the chat history!!!
+> - ✅ R: **getSession** is used for *Client Components* like hooks (login, logout), pages, components...
+> - ✅ R: **getServerSession** is used for *Server Components* like middleware-like checks, route handlers, api fetchs... we don't have it just yet, but can add for the chat history!!!
 
 > Follow up question: at client.ts, we're using getSession.then...catch... is this the best approach? Normaly we use async/await.
-> ✅ R: At Apollo auth link we prefer async setContext over .then...catch... 
+> - ✅ R: At Apollo auth link we prefer async setContext over .then...catch... 
 
 #### 3. JWT
 - NextAuth can issue JWTs or we can plug in our own JWT issuer (like my backend already does - generates on login)
@@ -99,10 +99,10 @@ jwt: (token, user, account, profile, isNewUser) => {
 ```
 
 > Follow up question: is the ***config*** setup correct for jwt? Because I see we're importing jwt from 'next-auth/jwt' instead of using user's token.
-> R: Yes, it's correct. The import is only for typescript types in the callbacks, not for generating the token. The config uses backend-issued `accessToken` and stores it inside NextAuth-managed session.
+> - ✅ R: Yes, it's correct. The import is only for typescript types in the callbacks, not for generating the token. The config uses backend-issued `accessToken` and stores it inside NextAuth-managed session.
 
 > Follow up question: are we using JWT from backend or frontend?
-> R: We're using backend-issued JWT for API authorization. NextAuth's JWT is the session container that stores the `accessToken` and delivers to Apollo.
+> - ✅ R: We're using backend-issued JWT for API authorization. NextAuth's JWT is the session container that stores the `accessToken` and delivers to Apollo.
 
 #### 4. Callbacks
 - Hooks to control behaviour
@@ -124,7 +124,7 @@ callbacks: {
 ```
 
 > Follow up question: Are currently using JWT from backend or frontend?! 
-> R: Flow:
+> - ✅ R: This is the Flow:
 > - Backend returns JWT: In *src/lib/auth/config.ts authorize()*, we call the GraphQL `login`/`register` mutations and receive `accessToken` from the backend (`result.login.accessToken` / `result.register.accessToken`).
 > - Stored in NextAuth JWT: Callback *jwt()* saves it on `token.accessToken`.
 > - Exposed in session: Callback *session()* copies it to `session.accessToken`.
@@ -136,7 +136,7 @@ callbacks: {
 - useSession() → get current session state
 
 > Follow up question: has relation to boiler plate of classes? export function signIn comming from node_modules/next-auth/src/react/index.tsx
-> R: 
+> - ✅ R: 
 
 #### 6. Middleware
 - File: src/middleware.ts
@@ -147,7 +147,7 @@ export const config = { matcher: ["/chat", "/dashboard"]}
 ```
 
 > Follow up question: where the f#*@ is this being used at our code? If it is, where?
-> R: 
+> - ✅ R: 
 
 --- 
 

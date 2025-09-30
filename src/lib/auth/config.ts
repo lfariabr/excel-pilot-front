@@ -83,6 +83,7 @@ const REGISTER_MUTATION = `
 
 export const authOptions: NextAuthOptions = {
   providers: [
+    // Providers define how users signIn (login)
     GithubProvider({
       clientId: process.env.GITHUB_CLIENT_ID!,
       clientSecret: process.env.GITHUB_CLIENT_SECRET!,
@@ -97,6 +98,7 @@ export const authOptions: NextAuthOptions = {
         action: { label: 'Action', type: 'text' }, // 'login' or 'register'
       },
       async authorize(credentials) {
+        // TODO: create an authUtils.ts file and move this logic there
         if (!credentials?.email || !credentials?.password) {
           throw new Error('Email and password are required')
         }
@@ -151,13 +153,17 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   session: {
+    // Session is responsible for user's login state
     strategy: 'jwt',
     maxAge: 24 * 60 * 60, // 24 hours
   },
   jwt: {
+    // By default, NextAuth stores JWTs in encrypted cookies
     maxAge: 24 * 60 * 60, // 24 hours
   },
   callbacks: {
+    // Hooks to control behaviour...
+    // JWT callback: get user data from the backend
     async jwt({ token, user }: { token: JWT; user?: any }) {
       // Initial sign in
       if (user) {
@@ -168,7 +174,7 @@ export const authOptions: NextAuthOptions = {
       return token
     },
     async session({ session, token }: { session: any; token: JWT }) {
-      // Send properties to the client
+      // Send properties (jwt token, user id, user role) to the Apollo client
       if (token) {
         session.accessToken = token.accessToken
         session.user.id = token.id
