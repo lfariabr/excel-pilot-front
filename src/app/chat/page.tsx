@@ -24,6 +24,7 @@ export default function Chat() {
     isLoading,
     isSendingMessage,
     isStartingConversation,
+    isAssistantTyping,
     error,
     createNewConversation,
     sendChatMessage,
@@ -179,7 +180,7 @@ export default function Chat() {
           {currentConversationId ? (
             <ChatMessages 
               messages={messages}
-              isLoading={isLoading}
+              isLoading={isAssistantTyping}
             />
           ) : (
             <div className="flex-1 flex items-center justify-center p-8">

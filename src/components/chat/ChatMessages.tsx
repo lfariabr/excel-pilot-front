@@ -12,7 +12,9 @@ import {
   MoreHorizontal 
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Message } from '@/lib/graphql/types/messageTypes';
+import { Message } from '@/lib/graphql/types/messageTypes'
+import { MessageStatus } from './MessageStatus';
+import { TypingIndicator } from './TypingIndicator';
 
 interface ChatMessagesProps {
   messages: Message[];
@@ -60,7 +62,7 @@ export function ChatMessages({ messages, isLoading = false }: ChatMessagesProps)
         />
       ))}
       
-      {isLoading && (
+      {/* {isLoading && (
         <div className="flex justify-start">
           <div className="flex items-center space-x-2 bg-gray-100 dark:bg-gray-700 rounded-lg p-3 max-w-xs">
             <div className="flex space-x-1">
@@ -71,7 +73,9 @@ export function ChatMessages({ messages, isLoading = false }: ChatMessagesProps)
             <span className="text-sm text-gray-600 dark:text-gray-300">AI is thinking...</span>
           </div>
         </div>
-      )}
+      )} */}
+
+      {isLoading && <TypingIndicator />}
       
       <div ref={messagesEndRef} />
     </div>
@@ -166,9 +170,13 @@ function MessageBubble({ message }: MessageBubbleProps) {
         </div>
         
         <div className={`flex items-center gap-2 mt-1 ${isUser ? 'flex-row-reverse' : 'flex-row'}`}>
-          <span className="text-xs text-gray-500 dark:text-gray-400">
-            {formatTime(message.createdAt)}
-          </span>
+          {isUser ? (
+            <MessageStatus status={message.status} timestamp={message.createdAt} />
+          ) : (
+            <span className="text-xs text-gray-500 dark:text-gray-400">
+              {formatTime(message.createdAt)}
+            </span>
+          )}
           
           {showActions && !isUser && (
             <div className="flex gap-1">

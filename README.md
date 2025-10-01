@@ -52,11 +52,11 @@ UI for guiding ExcelBM Concierges on daily tasks. Built with Next.js 14 (App Rou
 
 #### Core Features:
 
-**v0.0.x** - AskAI Chat Widget
+**v0.0.5** - AskAI Chat Widget
 - Integrate with backend OpenAI endpoints ✅
 - Implement conversation persistence and history ✅
 - Adjust chat title using MD format ✅
-- Add typing indicators and message status 
+- Add typing indicators and message status ✅
 - Add rate limiting UI feedback
 - Build floating chat widget with minimize/maximize
 - Create conversation export functionality

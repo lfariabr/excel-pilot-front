@@ -78,6 +78,15 @@ Create a ChatGPT-like interface with proper scrolling behavior, real-time messag
 - **Authentication**: JWT tokens with automatic refresh
 - **State Management**: React hooks with Apollo Client cache
 
+## Feature Breadkdown
+- Integrate with backend OpenAI endpoints ✅
+- Implement conversation persistence and history ✅
+- Adjust chat title using MD format ✅
+- Add typing indicators and message status ✅
+- Add rate limiting UI feedback
+- Build floating chat widget with minimize/maximize
+- Create conversation export functionality
+
 ## Next Steps
 - **Optimize cache invalidation strategies**
 - **Add typing indicators and message status**

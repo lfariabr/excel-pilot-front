@@ -1,10 +1,13 @@
 // TypeScript interfaces for Message data
 
+export type MessageStatus = 'sending' | 'sent' | 'delivered' | 'error';
+
 export interface Message {
     id: string;
     content: string;
     role?: 'user' | 'assistant' | 'system';
     createdAt: string;
+    status: MessageStatus;
     // conversationId?: string;
 }
 

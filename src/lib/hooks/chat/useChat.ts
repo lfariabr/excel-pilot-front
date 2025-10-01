@@ -7,6 +7,7 @@ import { useMessages } from '../message/useMessages';
 // Combined chat hook for easy chat functionality
 export const useChat = (conversationId?: string) => {
     const [currentConversationId, setCurrentConversationId] = useState<string | undefined>(conversationId);
+    const [isAssistantTyping, setIsAssistantTyping] = useState(false);
     
     // Conversation hooks
     const { conversations, loading: conversationsLoading, error: conversationsError, refetch: refetchConversations } = useConversations();
@@ -34,16 +35,20 @@ export const useChat = (conversationId?: string) => {
         }
 
         try {
+            setIsAssistantTyping(true);
+
             const newMessage = await sendMessage(currentConversationId, content);
 
             // refetch messages after a delay to get the updated messages
             setTimeout(() => {
                 refetchMessages();
+                setIsAssistantTyping(false);
             }, 2000);
             
             return newMessage;
         } catch (err) {
             console.error('Failed to send message:', err);
+            setIsAssistantTyping(false);
             throw err;
         }
     };
@@ -51,6 +56,8 @@ export const useChat = (conversationId?: string) => {
     // Start a new conversation with a message
     const startNewChatWithMessage = async (message: string) => {
         try {
+            setIsAssistantTyping(true);
+
             // Create conversation with the message as content
             const conversation = await startConversation(message);
             
@@ -65,12 +72,14 @@ export const useChat = (conversationId?: string) => {
                         fetchPolicy: 'network-only' 
                     });
                     console.log('After refetch - conversations:', result.data?.conversations);
+                    setIsAssistantTyping(false);
                 }, 2000);
 
                 return conversation;
             }
         } catch (err) {
             console.error('Failed to start new chat:', err);
+            setIsAssistantTyping(false);
             throw err;
         }
     };
@@ -90,6 +99,7 @@ export const useChat = (conversationId?: string) => {
         isLoading: conversationsLoading || messagesLoading,
         isStartingConversation: startingConversation,
         isSendingMessage: sendingMessage,
+        isAssistantTyping,
         
         // Error states
         error: conversationsError || messagesError || startConversationError || sendMessageError,
