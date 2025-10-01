@@ -2,8 +2,8 @@
 
 ## Goal
 
-Integrate NextAuth.js into the frontend to handle authentication and authorization.
-We will replace the current localStorage implementation with this feature.
+On this file, I will detail how I integrated NextAuth.js into the frontend to handle authentication and authorization.
+The implementation of this feature will replace the current *localStorage* approach.
 
 ## Current localStorage approach
 
@@ -22,7 +22,7 @@ export const removeToken = () => {
 }
 ```
 
-It works, but it's not the best approach. 
+It works, but it's not the best approach for the following reasons:
 - ❌ Token is visible/editable in DevTools (XSS risk).
 - ❌ Manually handle expiration/refresh.
 - ❌ No SSR session awareness → server-rendered pages don’t know who’s logged in.
@@ -68,7 +68,7 @@ providers: [
 ]
 ```
 
-> Follow up question: how to add Google or Github providers?
+- Follow up question: how to add Google or Github providers?
 > ✅ R: Add the providers to **authOptions.providers** in `src/lib/auth/config.ts` and set env vars
 
 #### 2. Session
@@ -78,11 +78,11 @@ providers: [
   - Client → const { data: session } = useSession()
   - Server → const session = await getSession()
 
-> Follow up question: why don't we use 'getServerSession' here and only 'getSession'?
+- Follow up question: why don't we use 'getServerSession' here and only 'getSession'?
 > - ✅ R: **getSession** is used for *Client Components* like hooks (login, logout), pages, components...
 > - ✅ R: **getServerSession** is used for *Server Components* like middleware-like checks, route handlers, api fetchs... we don't have it just yet, but can add for the chat history!!!
 
-> Follow up question: at client.ts, we're using getSession.then...catch... is this the best approach? Normaly we use async/await.
+- Follow up question: at client.ts, we're using getSession.then...catch... is this the best approach? Normaly we use async/await.
 > - ✅ R: At Apollo auth link we prefer async setContext over .then...catch... 
 
 #### 3. JWT
@@ -98,10 +98,10 @@ jwt: (token, user, account, profile, isNewUser) => {
 }
 ```
 
-> Follow up question: is the ***config*** setup correct for jwt? Because I see we're importing jwt from 'next-auth/jwt' instead of using user's token.
+- Follow up question: is the ***config*** setup correct for jwt? Because I see we're importing jwt from 'next-auth/jwt' instead of using user's token.
 > - ✅ R: Yes, it's correct. The import is only for typescript types in the callbacks, not for generating the token. The config uses backend-issued `accessToken` and stores it inside NextAuth-managed session.
 
-> Follow up question: are we using JWT from backend or frontend?
+- Follow up question: are we using JWT from backend or frontend?
 > - ✅ R: We're using backend-issued JWT for API authorization. NextAuth's JWT is the session container that stores the `accessToken` and delivers to Apollo.
 
 #### 4. Callbacks
@@ -123,7 +123,7 @@ callbacks: {
 },
 ```
 
-> Follow up question: Are currently using JWT from backend or frontend?! 
+- Follow up question: Are currently using JWT from backend or frontend?! 
 > - ✅ R: This is the Flow:
 > - Backend returns JWT: In *src/lib/auth/config.ts authorize()*, we call the GraphQL `login`/`register` mutations and receive `accessToken` from the backend (`result.login.accessToken` / `result.register.accessToken`).
 > - Stored in NextAuth JWT: Callback *jwt()* saves it on `token.accessToken`.
@@ -136,7 +136,7 @@ callbacks: {
 - useSession() → get current session state
 These are plain functions/hooks exported by next-auth/react
 
-> Follow up question: has relation to boiler plate of classes? export function signIn comming from node_modules/next-auth/src/react/index.tsx
+- Follow up question: has relation to boiler plate of classes? export function signIn comming from node_modules/next-auth/src/react/index.tsx
 > - ✅ R: No, These are framework-provided functions/hooks, wired to NextAuth config and API route.
 
 #### 6. Middleware
@@ -147,7 +147,7 @@ export { default } from "next-auth/middleware"
 export const config = { matcher: ["/chat", "/dashboard"]}
 ```
 
-> Follow up question: where the f#*@ is this being used at our code? If it is, where?
+- Follow up question: where the f#*@ is this being used at our code? If it is, where?
 > - ✅ R: We have it incorrectly placed at `src/lib/middleware.ts`. It should be at `src/middleware.ts` - fixed and changed matcher to `/chat/:path*`, `/dashboard/:path*`. rather than aggresive version
 
 --- 
@@ -172,6 +172,7 @@ npm install next-auth
 ---
 
 ### Tasks Breakdown
+
 **Part 1: Auth API Layer (NextAuth config & routes)**
 
 1. Create a new file `src/lib/auth/config.ts`
@@ -193,6 +194,7 @@ npm install next-auth
 8. Update useLogout hook
 
 ---
+
 **Part 2: Frontend Integration (pages, hooks, UI)**
 
 9. Update /login page using SignInForm component
@@ -203,7 +205,6 @@ npm install next-auth
 
 ---
 
-### 🦺 PENDING
 **Part 3: Testing & Cleanup**
 
 14. Test the auth flow - most important remaining task. Done, but gotta go through the flow a few times to make sure it's working.
@@ -212,8 +213,9 @@ npm install next-auth
 
 ---
 
-### v0.0.4 What's Missing/Enhanceable
-**FULLY IMPLEMENTED:**
+### v0.0.4 Overview
+
+#### **FULLY IMPLEMENTED:**
   ✅ NextAuth.js JWT configuration
   ✅ Login/Register pages with validation
   ✅ Role-based access control (useRoleAccess hook)
@@ -222,36 +224,36 @@ npm install next-auth
   ✅ Session management (24h expiry)
   ✅ Basic logout functionality
 
-**OPTIONAL ENHANCEMENTS (Medium Priority):**
-1. Session Inactivity Timeout
-- Current: 24h session expiry
-- Enhancement: Auto-logout after 1-2 hours of inactivity
-- Benefit: Better security for shared/public computers
-2. Logout Hook Cleanup
-- Issue: Still references old removeToken() and GraphQL mutations
-- Fix: Simplify to use only NextAuth signOut()
-- Benefit: Cleaner code, no legacy dependencies
-3. Session Refresh Warnings
-- Enhancement: Show "Session expires in 5 minutes" warning
-- Benefit: Better UX, prevents unexpected logouts- 
-4. NextAuth JWT configuration
-- Strengthen typing: Extend NextAuth types to include accessToken, id, and role on Session and JWT to avoid any.
-- OAuth provider parity: If you later use GitHub/Google for real auth, map their account.access_token similarly into token.accessToken in callbacks.jwt.
-- Refresh handling: If your backend issues refresh tokens, store them similarly and implement refresh logic in the JWT callback.
-
-**PRODUCTION READY FEATURES (Low Priority):**
-4. Enhanced Error Handling
-- Custom 401/403 error pages
-- Better error messages for auth failures
-- Retry mechanisms for network issues
-5. Security Enhancements
-- CSRF protection verification
-- Rate limiting on login attempts
-- Session fixation protection
-
-**TESTING (High Priority):**
-6. End-to-End Testing
+#### **TESTING (High Priority):**
+1. End-to-End Testing
 - Test: Login → Access protected route → Logout flow
 - Test: Role-based navigation visibility
 - Test: Session persistence across browser refresh
 - Test: Middleware redirects for unauthenticated users
+
+#### **OPTIONAL ENHANCEMENTS (Medium Priority):**
+1. Session Inactivity Timeout
+- Current: 24h session expiry
+- Enhancement: Auto-logout after 1-2 hours of inactivity
+> Benefit: Better security for shared/public computers
+
+2. Session Refresh Warnings
+- Enhancement: Show "Session expires in 5 minutes" warning
+> Benefit: Better UX, prevents unexpected logouts- 
+
+3. NextAuth JWT configuration
+- Strengthen typing: Extend NextAuth types to include accessToken, id, and role on Session and JWT to avoid any.
+- OAuth provider parity: If later we use GitHub/Google for real auth, map their account.access_token similarly into token.accessToken in callbacks.jwt.
+- Refresh handling: If backend issues refresh tokens, store them similarly and implement refresh logic in the JWT callback.
+
+#### **PRODUCTION READY FEATURES (Low Priority):**
+1. Enhanced Error Handling
+- Custom 401/403 error pages
+- Better error messages for auth failures
+- Retry mechanisms for network issues
+
+2. Security Enhancements
+- CSRF protection verification
+- Rate limiting on login attempts
+- Session fixation protection
+
