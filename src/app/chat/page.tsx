@@ -8,6 +8,7 @@ import { Menu } from "lucide-react";
 import { useChat } from "@/lib/hooks/chat";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { stripMarkdown } from '@/lib/utils/chatUtils';
 
 export default function Chat() {
   const { data: session, status } = useSession();
@@ -193,7 +194,7 @@ export default function Chat() {
           
           <div className="flex-1 min-w-0">
             <h1 className="text-lg font-semibold text-gray-900 dark:text-white truncate">
-              {currentConversation?.title || 'Excel Pilot Assistant'}
+              {stripMarkdown(currentConversation?.title || 'Excel Pilot Assistant')}
             </h1>
             <p className="text-sm text-gray-500 dark:text-gray-400">
               Your AI-powered Concierge Assistant
