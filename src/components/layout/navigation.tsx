@@ -29,6 +29,11 @@ export function Navigation() {
   const isAuthenticated = !!session?.user
   const isLoading = status === 'loading'
 
+  const hiddenRoutes = ['/login', '/register', '/chat']
+  if (hiddenRoutes.some((p) => pathname.startsWith(p))) {
+    return null
+  }
+
   const handleLogout = async () => {
     setLogoutLoading(true)
     try {

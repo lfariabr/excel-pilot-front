@@ -12,9 +12,8 @@ export default function LoginPage() {
             <div className="h-10 w-10 rounded-lg excel-gradient flex items-center justify-center">
               <span className="text-white font-bold text-lg">EP</span>
             </div>
-            <span className="font-bold text-xl text-gray-900">ExcelPilot</span>
+            <span className="font-bold text-xl text-gray-900">Welcome to ExcelPilot</span>
           </Link>
-          <h2 className="text-3xl font-bold text-gray-900">Welcome back</h2>
           <p className="mt-2 text-sm text-gray-600">
             Sign in to your account to continue
           </p>
