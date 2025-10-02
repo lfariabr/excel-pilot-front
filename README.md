@@ -58,8 +58,9 @@ UI for guiding ExcelBM Concierges on daily tasks. Built with Next.js 14 (App Rou
 - Adjust chat title using MD format ✅
 - Add typing indicators and message status ✅
 - Add rate limiting UI feedback ✅
-- Build floating chat widget with minimize/maximize
-- Create conversation export functionality
+- Add token limit UI feedback ✅
+- Personalize Bot avatar 
+- Customize ChatSidebar for logout 
 
 ---
 
@@ -91,7 +92,10 @@ UI for guiding ExcelBM Concierges on daily tasks. Built with Next.js 14 (App Rou
 - Create motivational modal with dynamic content
 - Create achievement system integration
 - Add analytics tracking for engagement
-- Implement premium feature gates
+
+**v0.0.x** - Floating Chat Widget
+- Build floating chat widget with minimize/maximize
+- Create conversation export functionality
 
 **v0.0.x** - Performance & Optimization
 - Implement React.memo and useMemo optimizations

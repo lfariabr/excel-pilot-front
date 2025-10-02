@@ -29,6 +29,9 @@ export default function Chat() {
     isAssistantTyping,
     isRateLimited,
     rateLimitSecondsLeft,
+    isTokenLimited,
+    tokenLimitSecondsLeft,
+    tokenRemaining,
     error,
     createNewConversation,
     sendChatMessage,
@@ -137,9 +140,10 @@ export default function Chat() {
     );
   }
 
-  // Show error state (ignore rate-limit which we handle inline, and avoid initial flash)
+  // Show error state (ignore rate-limit and token-limit which we handle inline, and avoid initial flash)
   const isRateLimitMessage = !!error?.message && /rate limit/i.test(error.message);
-  if (error && !isRateLimited && !isRateLimitMessage) {
+  const isTokenLimitMessage = !!error?.message && /token budget|token limit|daily token/i.test(error.message);
+  if (error && !isRateLimited && !isTokenLimited && !isRateLimitMessage && !isTokenLimitMessage) {
     return (
       <div className="flex h-screen items-center justify-center">
         <div className="text-center">
@@ -235,8 +239,13 @@ export default function Chat() {
 
         {/* Near-input rate-limit notice */}
         {isRateLimited && (
-          <div className="px-4 lg:px-6 py-2 bg-amber-50 text-amber-700 border-t border-amber-200 text-xs">
-            You have hit the limit of messages. Try again in {rateLimitSecondsLeft}s.
+          <div className="px-4 lg:px-6 py-2 bg-amber-50 text-amber-700 border-b border-amber-200 text-sm">
+            Rate limit exceeded. Try again in {rateLimitSecondsLeft}s.
+          </div>
+        )}
+        {isTokenLimited && (
+          <div className="px-4 lg:px-6 py-2 bg-rose-50 text-rose-700 border-b border-rose-200 text-sm">
+            Daily token budget exceeded{typeof tokenRemaining === 'number' ? ` · Remaining: ${tokenRemaining} tokens` : ''}. Resets in {Math.max(1, Math.ceil(tokenLimitSecondsLeft/3600))}h.
           </div>
         )}
 

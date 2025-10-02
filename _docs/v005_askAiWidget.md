@@ -86,6 +86,11 @@ Create a ChatGPT-like interface with proper scrolling behavior, real-time messag
 - Add rate limiting UI feedback ✅
 - Build floating chat widget with minimize/maximize
 - Create conversation export functionality
+- chat page "### Visitor Car Park Rules" not treated... ✅
+- daily limit token usage needs to be added to interface just like we did for rate limit ✅
+- break useChat into smaller hooks (useLimits.tsx) ✅
+- make settings icon work at Excel Pilot User - Free Plan footer info (use user name too)
+- add Atlas image somewhere (maybe replace "Bot" icon)
 
 ## Next Steps
 - **Optimize cache invalidation strategies**
