@@ -93,3 +93,42 @@ Create a ChatGPT-like interface with proper scrolling behavior, real-time messag
 - **Add message reactions and threading**
 - **Add file upload support**
 - **Add conversation search and filtering**
+
+
+> Description: We implemented a proper rate-limit UX for the Ask AI chat.
+
+- Parse GraphQL rate-limit errors:
+    - extensions.code: RATE_LIMITED / TOKEN_BUDGET_EXCEEDED
+    - extensions.resetTime (ms or sec)
+    - Fallbacks: HTTP 429 Retry-After, and regex “Try again in N seconds”
+- Expose cooldown state in `useChat()`:
+    - isRateLimited, rateLimitSecondsLeft
+    - applyRateLimit(seconds) for synchronous UI updates on send failure
+- UI:
+    - Suppress full-screen error for rate-limit; show compact banners with countdown
+    - Disable input during cooldown; placeholder shows “Try again in Ns” (live countdown)
+- Typing indicator:
+    - Stop dots once an assistant message arrives after the user’s last send; keeps Atlas’ initial animation
+
+Changes:
+- `src/lib/hooks/chat/useChat.ts`
+    - Added cooldown state and parser; handles multiple sources for limit info
+    - Interval to tick countdown; clamps to avoid 0s flicker
+    - applyRateLimit(seconds) to set cooldown synchronously
+    - Typing indicator cleared by observing messages with lastUserSendAt
+- `src/app/chat/page.tsx`
+    - Inline banners; disabled input with countdown; accurate seconds from send error; avoid full-page error for limits
+- `src/components/chat/ChatInput.tsx`
+    - Added cooldownSeconds prop; placeholder shows countdown
+
+How to test:
+1. Hit send repeatedly to trigger rate limit.
+2. Verify no full-page red error; two compact banners show countdown.
+3. Input is disabled; placeholder shows live seconds.
+4. Try sending during cooldown; transient notice shows accurate seconds; state updates immediately.
+5. After assistant responds, typing dots stop promptly.
+
+Acceptance:
+- No full-screen rate-limit error
+- Countdown is accurate and consistent in all places
+- Typing indicator stops after assistant reply

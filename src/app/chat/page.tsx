@@ -16,6 +16,7 @@ export default function Chat() {
   // All hooks MUST come before any conditional returns
   const [prompt, setPrompt] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
   
   const {
     conversations,
@@ -25,12 +26,15 @@ export default function Chat() {
     isSendingMessage,
     isStartingConversation,
     isAssistantTyping,
+    isRateLimited,
+    rateLimitSecondsLeft,
     error,
     createNewConversation,
     sendChatMessage,
     switchConversation,
     startNewChatWithMessage,
     refetchConversations,
+    applyRateLimit,
   } = useChat();
 
   const currentConversation = conversations.find(c => c.id === currentConversationId);
@@ -72,7 +76,35 @@ export default function Chat() {
         await startNewChatWithMessage(content.trim());
       }
       setPrompt("");
-    } catch (error) {
+    } catch (error: any) {
+      const msg = typeof error?.message === 'string' ? error.message : '';
+      const isRateMsg = /rate limit/i.test(msg) || isRateLimited;
+
+      if (isRateMsg) {
+        let secs = rateLimitSecondsLeft || 0;
+        try {
+          const gqlErrors = error?.graphQLErrors || error?.clientErrors || [];
+          for (const ge of gqlErrors) {
+            const code = ge?.extensions?.code;
+            if (code && /RATE_LIMITED|TOKEN_BUDGET_EXCEEDED/i.test(code)) {
+              let reset = ge?.extensions?.resetTime as any;
+              if (typeof reset === 'number' && Number.isFinite(reset)) {
+                if (reset < 1e12) reset = reset * 1000;
+                const ms = reset - Date.now();
+                secs = Math.max(1, Math.ceil(ms / 1000));
+                break;
+              }
+            }
+          }
+          if (!secs || secs < 1) {
+            const m = msg.match(/try again in\s+(\d+)\s*seconds?/i);
+            if (m) secs = parseInt(m[1], 10);
+          }
+        } catch {}
+        if (!secs || secs < 1) secs = 1;
+        applyRateLimit(secs);
+      }
+
       console.error('Failed to send message:', error);
     }
   };
@@ -104,8 +136,9 @@ export default function Chat() {
     );
   }
 
-  // Show error state
-  if (error) {
+  // Show error state (ignore rate-limit which we handle inline, and avoid initial flash)
+  const isRateLimitMessage = !!error?.message && /rate limit/i.test(error.message);
+  if (error && !isRateLimited && !isRateLimitMessage) {
     return (
       <div className="flex h-screen items-center justify-center">
         <div className="text-center">
@@ -199,18 +232,33 @@ export default function Chat() {
           )}
         </div>
 
+        {/* Near-input rate-limit notice */}
+        {isRateLimited && (
+          <div className="px-4 lg:px-6 py-2 bg-amber-50 text-amber-700 border-t border-amber-200 text-xs">
+            You have hit the limit of messages. Try again in {rateLimitSecondsLeft}s.
+          </div>
+        )}
+
+        {/* Inline transient notice above input */}
+        {notice && (
+          <div className="px-4 lg:px-6 py-2 text-xs text-amber-800 bg-amber-50 border-t border-amber-200">
+            {notice}
+          </div>
+        )}
+
         {/* Chat Input */}
         <div className="flex-shrink-0">
           <ChatInput
             value={prompt}
             onChange={setPrompt}
             onSend={handleSendMessage}
-            disabled={isSendingMessage || isStartingConversation}
+            disabled={isSendingMessage || isStartingConversation || isRateLimited}
             placeholder={
               currentConversationId 
                 ? "Type your message..." 
                 : "Start a new conversation..."
             }
+            cooldownSeconds={rateLimitSecondsLeft}
           />
         </div>
       </div>

@@ -14,6 +14,7 @@ interface ChatInputProps {
   onSend: (message: string) => void;
   disabled?: boolean;
   placeholder?: string;
+  cooldownSeconds?: number;
 }
 
 export function ChatInput({ 
@@ -21,7 +22,8 @@ export function ChatInput({
   onChange, 
   onSend, 
   disabled = false,
-  placeholder = "Ask me anything about Excel..." 
+  placeholder = "Ask me anything about Excel...",
+  cooldownSeconds
 }: ChatInputProps) {
   const [isRecording, setIsRecording] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -85,7 +87,7 @@ export function ChatInput({
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder={placeholder}
+                placeholder={disabled && typeof cooldownSeconds === 'number' && cooldownSeconds > 0 ? `Rate limited. Try again in ${cooldownSeconds}s` : placeholder}
                 disabled={disabled}
                 rows={1}
                 className="w-full resize-none rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-3 pr-12 text-sm placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
