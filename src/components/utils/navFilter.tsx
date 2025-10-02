@@ -8,9 +8,10 @@ import { BarChart3,
 } from "lucide-react"
 
 export const navigationItems = [
-    { href: "/", label: "Dashboard", icon: Home, roles: ['admin', 'concierge', 'manager', 'casual'] },
+    { href: "/", label: "Home", icon: Home, roles: ['admin', 'concierge', 'manager', 'casual'] },
+    { href: "/dashboard", label: "Dash", icon: BarChart3, roles: ['admin', 'concierge', 'manager', 'casual'] },
     { href: "/tasks", label: "Tasks", icon: BarChart3, roles: ['admin', 'concierge', 'manager'] },
-    { href: "/search", label: "Search", icon: Search, roles: ['admin', 'concierge', 'manager', 'casual'] },
+    // { href: "/search", label: "Search", icon: Search, roles: ['admin', 'concierge', 'manager', 'casual'] },
     { href: "/chat", label: "Ask AI", icon: MessageSquare, roles: ['admin', 'concierge', 'manager', 'casual'] },
     { href: "/settings", label: "Settings", icon: Settings, roles: ['admin', 'concierge', 'manager', 'casual'] },
   ]

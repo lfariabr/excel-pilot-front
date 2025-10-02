@@ -13,6 +13,7 @@ import {
   LogOut
 } from 'lucide-react';
 import { Conversation } from '@/lib/graphql/types/conversationTypes';
+import { stripMarkdown } from '@/lib/utils/chatUtils';
 
 interface ChatSidebarProps {
   conversations: Conversation[];
@@ -41,17 +42,6 @@ export function ChatSidebar({
     if (days === 1) return 'Yesterday';
     if (days < 7) return `${days} days ago`;
     return date.toLocaleDateString();
-  };
-
-  // Strip markdown syntax from text
-  const stripMarkdown = (text: string): string => {
-    return text
-      .replace(/^#{1,6}\s+/gm, '')  // Remove heading markers (###, ##, #)
-      .replace(/\*\*(.+?)\*\*/g, '$1')  // Remove bold
-      .replace(/\*(.+?)\*/g, '$1')  // Remove italic
-      .replace(/`(.+?)`/g, '$1')  // Remove inline code
-      .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')  // Remove links but keep text
-      .trim();
   };
 
   const groupConversationsByDate = (conversations: Conversation[]) => {

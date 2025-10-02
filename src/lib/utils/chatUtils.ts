@@ -41,3 +41,14 @@ export const parseRateLimit = (err: unknown): number | null => {
     }
     return null;
 };
+
+// Strip markdown syntax from text
+export const stripMarkdown = (text: string): string => {
+    return text
+      .replace(/^#{1,6}\s+/gm, '')  // Remove heading markers (###, ##, #)
+      .replace(/\*\*(.+?)\*\*/g, '$1')  // Remove bold
+      .replace(/\*(.+?)\*/g, '$1')  // Remove italic
+      .replace(/`(.+?)`/g, '$1')  // Remove inline code
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')  // Remove links but keep text
+      .trim();
+  };
