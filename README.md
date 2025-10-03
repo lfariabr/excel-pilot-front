@@ -59,8 +59,8 @@ UI for guiding ExcelBM Concierges on daily tasks. Built with Next.js 14 (App Rou
 - Add typing indicators and message status ✅
 - Add rate limiting UI feedback ✅
 - Add token limit UI feedback ✅
+- Customize ChatSidebar for logout ✅
 - Personalize Bot avatar 
-- Customize ChatSidebar for logout 
 
 ---
 

@@ -14,6 +14,9 @@ import {
 } from 'lucide-react';
 import { Conversation } from '@/lib/graphql/types/conversationTypes';
 import { stripMarkdown } from '@/lib/utils/chatUtils';
+import { useRoleAccess } from '@/lib/hooks/auth/useRoleAccess';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem } from '@/components/ui/dropdown-menu';
+import { signOut } from 'next-auth/react';
 
 interface ChatSidebarProps {
   conversations: Conversation[];
@@ -59,6 +62,8 @@ export function ChatSidebar({
   };
 
   const groupedConversations = groupConversationsByDate(conversations);
+
+  const { user, role } = useRoleAccess()
 
   return (
     <div className="w-80 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col h-full">
@@ -133,24 +138,41 @@ export function ChatSidebar({
 
       {/* User Profile Section */}
       <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-        <div className="flex items-center gap-3">
-          <Avatar className="w-8 h-8">
-            <div className="w-full h-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
-              <User className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+        <DropdownMenu>
+          <div className="flex items-center gap-3">
+            <Avatar className="w-8 h-8">
+              <div className="w-full h-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
+                <User className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              </div>
+            </Avatar>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                {user?.name || user?.email || 'User'}
+              </p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                Free Plan | {user?.email}
+              </p>
             </div>
-          </Avatar>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-              Excel Pilot User
-            </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
-              Free Plan
-            </p>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" className="p-1 h-auto">
+                <Settings className="w-4 h-4 text-gray-400" />
+              </Button>
+            </DropdownMenuTrigger>
           </div>
-          <Button variant="ghost" size="sm" className="p-1 h-auto">
-            <Settings className="w-4 h-4 text-gray-400" />
-          </Button>
-        </div>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>
+              <div className="flex flex-col">
+                <span>{user?.name || user?.email || 'User'}</span>
+                <span className="text-xs text-muted-foreground capitalize">{role}</span>
+              </div>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => signOut({ callbackUrl: '/login' })}>
+              <LogOut className="mr-2 h-4 w-4" />
+              <span>Sign out</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   );
