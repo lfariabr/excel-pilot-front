@@ -46,12 +46,6 @@ UI for guiding ExcelBM Concierges on daily tasks. Built with Next.js 14 (App Rou
 - Add authentication middleware for protected routes ✅
 - Implement logout functionality with session cleanup ✅
 
----
-
-### 🔨**WORK IN PROGRESS**:
-
-#### Core Features:
-
 **v0.0.5** - AskAI Chat Widget
 - Integrate with backend OpenAI endpoints ✅
 - Implement conversation persistence and history ✅
@@ -60,7 +54,13 @@ UI for guiding ExcelBM Concierges on daily tasks. Built with Next.js 14 (App Rou
 - Add rate limiting UI feedback ✅
 - Add token limit UI feedback ✅
 - Customize ChatSidebar for logout ✅
-- Personalize Bot avatar 
+- Personalize Bot avatar ✅
+
+---
+
+### 🔨**WORK IN PROGRESS**:
+
+tbd
 
 ---
 

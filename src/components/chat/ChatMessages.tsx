@@ -95,7 +95,7 @@ function MessageBubble({ message }: MessageBubbleProps) {
   const copyToClipboard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      // You could add a toast notification here
+      // #TODO: add a toast notification here
     } catch (err) {
       console.error('Failed to copy text: ', err);
     }
@@ -103,14 +103,15 @@ function MessageBubble({ message }: MessageBubbleProps) {
 
   return (
     <div 
-      className={`flex gap-3 ${isUser ? 'justify-end' : 'justify-start'}`}
+      className={`group flex gap-3 ${isUser ? 'justify-end' : 'justify-start'}`}
       onMouseEnter={() => setShowActions(true)}
       onMouseLeave={() => setShowActions(false)}
     >
       {!isUser && (
-        <Avatar className="w-8 h-8 flex-shrink-0">
+        <Avatar className="w-12 h-12 flex-shrink-0">
           <div className="w-full h-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
-            <Bot className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+            {/* <Bot className="w-4 h-4 text-blue-600 dark:text-blue-400" /> */}
+            <img src="/Atlas.png" alt="Atlas" className="w-12 h-12" />
           </div>
         </Avatar>
       )}
@@ -170,7 +171,7 @@ function MessageBubble({ message }: MessageBubbleProps) {
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100"
+                className="h-6 w-6 p-0"
                 onClick={() => copyToClipboard(message.content)}
               >
                 <Copy className="w-3 h-3" />
@@ -178,14 +179,14 @@ function MessageBubble({ message }: MessageBubbleProps) {
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100"
+                className="h-6 w-6 p-0"
               >
                 <ThumbsUp className="w-3 h-3" />
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100"
+                className="h-6 w-6 p-0"
               >
                 <ThumbsDown className="w-3 h-3" />
               </Button>
@@ -195,9 +196,9 @@ function MessageBubble({ message }: MessageBubbleProps) {
       </div>
       
       {isUser && (
-        <Avatar className="w-8 h-8 flex-shrink-0">
-          <div className="w-full h-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
-            <User className="w-4 h-4 text-green-600 dark:text-green-400" />
+        <Avatar className="w-12 h-12 flex-shrink-0">
+          <div className="w-full h-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
+            <User className="w-4 h-4 text-blue-600 dark:text-blue-400" />
           </div>
         </Avatar>
       )}

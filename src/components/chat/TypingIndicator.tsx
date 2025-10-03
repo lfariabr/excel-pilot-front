@@ -6,9 +6,9 @@ import { Bot } from 'lucide-react';
 export function TypingIndicator() {
     return (
       <div className="flex gap-3 justify-start">
-        <Avatar className="w-8 h-8 flex-shrink-0">
+        <Avatar className="w-12 h-12 flex-shrink-0">
           <div className="w-full h-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
-            <Bot className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+            <img src="/Atlas.png" alt="Atlas" className="w-12 h-12" />
           </div>
         </Avatar>
         
