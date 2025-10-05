@@ -25,29 +25,42 @@ Be able to use this chat in any page, given that I want an easy way for final us
 
 ## Layers
 
-### 1 - Core React primitives
-- useState stores local state
+### Layer 1 - Core React primitives
+
+- **useState** stores local state
     - in `useChat()`: `isAssistantTyping` toggles the dots while Atlas "thinks" @ *src/lib/hooks/useChat.ts* 
     - in `useLimits()`: `rateLimitResetAt`, `tokenLimitResetAt`, `tokenRemaining` and `now` drive the countdown @ *src/lib/hooks/useLimits.ts*
 
     > **Follow up question:** Where exactly typing is triggered? Same for limit
 
-- useEffect reacts to state changes and side effects
+- **useEffect** reacts to state changes and side effects
     - `useLimits()` starts a 1s interval when any limit is active to tick `now` and update countdowns. It also clears limits when time passes.
     - `useChat()` uses an effect to stop the typing dots when a new assistant message arrives after the last user send (prevents killing Atlas' first welcome animation)
 
     > **Follow up question:** So useLimits is inside useChat and whenever we invoke it, useLimit can also be used. Anything else to note?
 
-- useMemo derives values from state (no recomputation unless input changes)
+- **useMemo** derives values from state (no recomputation unless input changes)
     - `useLimits()`: `isRateLimited`, `isTokenLimited`, `rateLimitSecondsLeft`, `tokenLimitSecondsLeft`.
     - `useChat()`: memoizes the "error bag" [`conversationsError`, `messagesError`, `sendMessageError`, `startConversationError`] before passing to `useLimits()` to avoid unnecessary re-parses.
 
-- analogy
-    - State = variables on a whiteboard
-    - Effect = an alarm clock that rings when a specific number changes
-    - Memo = a cached calculation that only recomputes if its inputs change
+**Analogy**
+- **State** = variables on a whiteboard
+- **Effect** = an alarm clock that rings when a specific number changes
+- **Memo** = a cached calculation that only recomputes if its inputs change
 
-### 2 - Lifting state and separation of concerns
+### Layer 2 - Lifting state and separation of concerns
+- We "lifted" all limit logic out of `useChat()` to `useLimits()` so:
+    - `useLimits()` owns parsing GraphQL errors, normalizing ms vs seconds, regex fallbacks, ticking timers and exposing a simple surface API.
+    - `useChat()` stays focused on chat workflow: select conversation, send message, show typing and block sends if limited.
+
+**Analogy**
+- `useChat()` is the "dispatcher" of a team
+- `useLimits()` is the "policy officer" deciding wheter dispatch can proceed + tracking cool-down clocks.
+
+### Layer 3 - Custom hooks composition
+
+---
+
 
 
 
