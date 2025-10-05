@@ -9,7 +9,7 @@ UI for guiding ExcelBM Concierges on daily tasks. Built with Next.js 14 (App Rou
 | shadcn/ui + Design System | ✅ | _v0.0.2_ | _UI/UX_ |
 | Apollo Client (GraphQL) | ✅ | _v0.0.3_ | _Data Integration_ |
 | NextAuth.js + JWT | ✅ | _v0.0.4_ | _Authentication_ |
-| AskAI Chat Widget | 🏗️🧱🔨 | _v0.0.5_ | _UI/UX_ |
+| AskAI Chat Widget | ✅ | _v0.0.5_ | _UI/UX_ |
 | Admin Features | 🏗️🧱🔨 | _v0.0.x_ | _UI/UX_ |
 | Docker | 🏗️🧱🔨 | TBD | _DevOps_ |
 | Jest + Testing | 🏗️🧱🔨 | TBD | _Testing_ |
@@ -79,7 +79,7 @@ tbd
 #### Advanced Features:
 
 **v0.0.x** - Protected Routes + Optimistic UI
-- Implement route guards with role-based permissions
+- Implement route guards with role-based permissions ✅
 - Add loading states and skeleton components
 - Create optimistic UI patterns for mutations
 - Implement error boundaries with retry mechanisms

@@ -14,7 +14,6 @@ export default function Chat() {
   const { data: session, status } = useSession();
   const router = useRouter();
   
-  // All hooks MUST come before any conditional returns
   const [prompt, setPrompt] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
@@ -43,7 +42,6 @@ export default function Chat() {
 
   const currentConversation = conversations.find(c => c.id === currentConversationId);
 
-  // NOW you can do conditional checks and early returns
   // Check authentication status
   if (status === 'loading') {
     return (
@@ -143,13 +141,14 @@ export default function Chat() {
   // Show error state (ignore rate-limit and token-limit which we handle inline, and avoid initial flash)
   const isRateLimitMessage = !!error?.message && /rate limit/i.test(error.message);
   const isTokenLimitMessage = !!error?.message && /token budget|token limit|daily token/i.test(error.message);
+  const isUnauthError = !!error?.message && /unauth/i.test(error.message);
   if (error && !isRateLimited && !isTokenLimited && !isRateLimitMessage && !isTokenLimitMessage) {
     return (
       <div className="flex h-screen items-center justify-center">
         <div className="text-center">
           <p className="text-red-600 mb-4">Error loading chat: {error.message}</p>
-          <Button onClick={() => refetchConversations()}>
-            Retry
+          <Button onClick={() => isUnauthError ? router.push('/login') : refetchConversations()}>
+            {isUnauthError ? 'Try again' : 'Retry'}
           </Button>
         </div>
       </div>
@@ -223,15 +222,15 @@ export default function Chat() {
           ) : (
             <div className="flex-1 flex items-center justify-center p-8">
               <div className="text-center max-w-md">
+                <div className="mb-4 flex items-center justify-center">
+                  <img src="/Atlas.png" alt="Atlas" className="w-48 h-48"/>
+                </div>
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-                  Welcome to Excel Pilot
+                  Hi, my name is <span className="text-blue-600"> Atlas</span>!
                 </h2>
                 <p className="text-gray-600 dark:text-gray-400 mb-6">
-                  Start a new conversation or select an existing one from the sidebar to begin chatting with your AI assistant.
+                  I will be happy to assist you. You can start a new conversation or select an existing one from the sidebar.
                 </p>
-                <Button onClick={handleNewChat} disabled={isStartingConversation}>
-                  {isStartingConversation ? 'Creating...' : 'Start New Chat'}
-                </Button>
               </div>
             </div>
           )}
@@ -262,11 +261,11 @@ export default function Chat() {
             value={prompt}
             onChange={setPrompt}
             onSend={handleSendMessage}
-            disabled={isSendingMessage || isStartingConversation || isRateLimited}
+            disabled={Boolean(isSendingMessage || isStartingConversation || isRateLimited)}
             placeholder={
               currentConversationId 
                 ? "Type your message..." 
-                : "Start a new conversation..."
+                : "Start new conversation..."
             }
             cooldownSeconds={rateLimitSecondsLeft}
           />

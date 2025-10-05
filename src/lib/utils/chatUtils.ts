@@ -52,3 +52,5 @@ export const stripMarkdown = (text: string): string => {
       .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')  // Remove links but keep text
       .trim();
   };
+
+export type ChatRole = 'user' | 'assistant';

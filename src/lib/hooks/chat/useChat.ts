@@ -1,15 +1,18 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useStartConversation } from '../conversation/useStartConversation';
 import { useSendMessage } from '../message/useSendMessage';
 import { useConversations } from '../conversation/useConversations';
 import { useMessages } from '../message/useMessages';
 import { parseRateLimit } from '../../utils/chatUtils';
 import { useLimits } from '../limit/useLimits';
+import { ChatRole } from '../../utils/chatUtils';
 
 export const useChat = (conversationId?: string) => {
     const [currentConversationId, setCurrentConversationId] = useState<string | undefined>(conversationId);
     const [isAssistantTyping, setIsAssistantTyping] = useState(false);
     const lastUserSendAtRef = useRef<number | null>(null);
+    const sendTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const startTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const { conversations, loading: conversationsLoading, error: conversationsError, refetch: refetchConversations } = useConversations();
     const { startConversation, loading: startingConversation, error: startConversationError } = useStartConversation();
@@ -25,8 +28,6 @@ export const useChat = (conversationId?: string) => {
         tokenRemaining,
         applyRateLimit,
         setRateLimitResetAt,
-        setTokenLimitResetAt,
-        setTokenRemaining,
         applyLimitsFromError
       } = useLimits([
         conversationsError,
@@ -35,16 +36,12 @@ export const useChat = (conversationId?: string) => {
         sendMessageError
       ]);
 
-    const createNewConversation = async (title?: string, initialMessage?: string) => {
-        try {
-            setCurrentConversationId(undefined);
-            return null;
-        } catch (err) {
-            throw err;
-        }
+    const createNewConversation = (title?: string, initialMessage?: string) => {
+        setCurrentConversationId(undefined);
+        return null;
     };
 
-    const sendChatMessage = async (content: string, role: 'user' | 'assistant' = 'user') => {
+    const sendChatMessage = async (content: string, role: ChatRole = 'user') => {
         if (!currentConversationId) {
             throw new Error('No conversation selected');
         }
@@ -58,7 +55,11 @@ export const useChat = (conversationId?: string) => {
             lastUserSendAtRef.current = Date.now();
             setIsAssistantTyping(true);
             const newMessage = await sendMessage(currentConversationId, content);
-            setTimeout(() => {
+            // clear any pending timeout before scheduling a new one
+            if (sendTimeoutRef.current) {
+                clearTimeout(sendTimeoutRef.current);
+            }
+            sendTimeoutRef.current = setTimeout(() => {
                 refetchMessages();
                 setIsAssistantTyping(false);
             }, 2000);
@@ -83,7 +84,11 @@ export const useChat = (conversationId?: string) => {
             const conversation = await startConversation(message);
             if (conversation) {
                 setCurrentConversationId(conversation.id);
-                setTimeout(async () => {
+                // clear any pending timeout before scheduling a new one
+                if (startTimeoutRef.current) {
+                    clearTimeout(startTimeoutRef.current);
+                }
+                startTimeoutRef.current = setTimeout(async () => {
                     await refetchConversations({ fetchPolicy: 'network-only' });
                     setIsAssistantTyping(false);
                 }, 2000);
@@ -100,6 +105,14 @@ export const useChat = (conversationId?: string) => {
     const switchConversation = (conversationId: string) => {
         setCurrentConversationId(conversationId);
     };
+
+    // Cleanup timeouts on unmount to avoid state updates after unmount
+    useEffect(() => {
+        return () => {
+            if (sendTimeoutRef.current) clearTimeout(sendTimeoutRef.current);
+            if (startTimeoutRef.current) clearTimeout(startTimeoutRef.current);
+        };
+    }, []);
 
     // Clear typing indicator only when a new assistant message arrives after the last user send
     useEffect(() => {
