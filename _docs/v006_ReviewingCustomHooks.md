@@ -30,18 +30,17 @@ Be able to use this chat in any page, given that I want an easy way for final us
 - **useState** stores local state
     - in `useChat()`: `isAssistantTyping` toggles the dots while Atlas "thinks" @ *src/lib/hooks/useChat.ts* 
     - in `useLimits()`: `rateLimitResetAt`, `tokenLimitResetAt`, `tokenRemaining` and `now` drive the countdown @ *src/lib/hooks/useLimits.ts*
-
-    > **Follow up question:** Where exactly typing is triggered? Same for limit
+    - **Follow up question:** Where exactly typing is triggered? Same for limit
 
 - **useEffect** reacts to state changes and side effects
     - `useLimits()` starts a 1s interval when any limit is active to tick `now` and update countdowns. It also clears limits when time passes.
     - `useChat()` uses an effect to stop the typing dots when a new assistant message arrives after the last user send (prevents killing Atlas' first welcome animation)
-
-    > **Follow up question:** So useLimits is inside useChat and whenever we invoke it, useLimit can also be used. Anything else to note?
+    - **Follow up question:** So useLimits is inside useChat and whenever we invoke it, useLimit can also be used. Anything else to note?
 
 - **useMemo** derives values from state (no recomputation unless input changes)
     - `useLimits()`: `isRateLimited`, `isTokenLimited`, `rateLimitSecondsLeft`, `tokenLimitSecondsLeft`.
     - `useChat()`: memoizes the "error bag" [`conversationsError`, `messagesError`, `sendMessageError`, `startConversationError`] before passing to `useLimits()` to avoid unnecessary re-parses.
+    - **Follow up question:** more examples?
 
 **Analogy**
 - **State** = variables on a whiteboard
@@ -52,13 +51,25 @@ Be able to use this chat in any page, given that I want an easy way for final us
 - We "lifted" all limit logic out of `useChat()` to `useLimits()` so:
     - `useLimits()` owns parsing GraphQL errors, normalizing ms vs seconds, regex fallbacks, ticking timers and exposing a simple surface API.
     - `useChat()` stays focused on chat workflow: select conversation, send message, show typing and block sends if limited.
+    - **Follow up question:** why blue and yellow colors on returned statements at useLimits? and is this the best way to do it? or should rethinkg useLimits.ts to separate the logic?
 
 **Analogy**
 - `useChat()` is the "dispatcher" of a team
 - `useLimits()` is the "policy officer" deciding wheter dispatch can proceed + tracking cool-down clocks.
 
 ### Layer 3 - Custom hooks composition
+- `useChat()` composes domain hooksL
+    - `useConversations()` fetch list of threads
+    - `useMessages(conversationId)` fech emssages for the active thread
+    - `useSendMessage()`, `useStartConversation()` perform mutations
+    - `useLimits(errorBag)` parses all surfaced errors to produce UX-ready state:
+        - `isRateLimited`, `rateLimitSecondsLeft`
+        - `isTokenLimited`, `tokenLimitSecondsLeft`, `tokenRemaining`
+        - `applyLimitsFromError(err)`, `applyRateLimit(seconds)` for immediate UI updates inside catch blocks.
+- The chat page consumes only `useChat()` and renders banners, disables input, shows typing dots, etc.
 
+**Analogy**
+- Each hook is a small machine. useChat() is the assembly line connecting them. The page is the showroom.
 ---
 
 

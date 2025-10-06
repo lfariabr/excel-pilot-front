@@ -1,10 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-
-type Limits = {
-  rateResetAt: number | null;
-  tokenResetAt: number | null;
-  remainingTokens?: number | null;
-};
+import { Limits } from '../../utils/limitUtils';
 
 export const useLimits = (errors: unknown[]) => {
   const [rateLimitResetAt, setRateLimitResetAt] = useState<number | null>(null);
