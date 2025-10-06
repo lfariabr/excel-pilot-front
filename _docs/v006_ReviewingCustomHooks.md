@@ -70,7 +70,25 @@ Be able to use this chat in any page, given that I want an easy way for final us
 
 **Analogy**
 - Each hook is a small machine. useChat() is the assembly line connecting them. The page is the showroom.
+
 ---
+
+## Tricky bits explained
+
+### **Token vs Request rate limits**
+Both are parsed from GraphQL error `extensions`:
+- `code === 'RATE_LIMITED'` → show seconds until next request.
+- `code === 'TOKEN_BUDGET_EXCEEDED' + resetTime + remaining` → show "Resets in X hours" and remaining tokens.
+- Fallbacks:
+    - HTTP 429 `Retry-After` header
+    - Message regex ("try again in N seconds", "Remaining N tokens", "Resets in X hours")
+
+### **Countdowns**
+`useLimits()` runs a 1s interval only when needed and stops it automatically, preventing leaks and excess renders
+
+### **Typing indicator**
+We clear dots only when an assistant message time is after the last user send time. This preserves Atlas' initial welcome animation.
+
 
 
 
