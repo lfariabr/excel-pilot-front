@@ -89,7 +89,38 @@ Both are parsed from GraphQL error `extensions`:
 ### **Typing indicator**
 We clear dots only when an assistant message time is after the last user send time. This preserves Atlas' initial welcome animation.
 
+---
 
+## Build It from Scratch: a pragmatic sequence
 
+### 1. GraphQL client and provider
+- Set up Apollo Client and `ApolloProvider`
+
+### 2. Domain queries/mutations
+- `useConversations()`, `useMessages(conversationId)`, `useSendMessage()`, `useStartConversation()` with `errorPolicy: 'all'`, stable fetch policies
+
+### 3. Basic chat page
+- Renders messages and a simple input wired to `sendMessage()`. No limits/typing yet.
+
+### 4. Typing indicator
+- Add `isAssistantTyping` and the "last user send" timestamp trick for correct clearing of typing dots
+
+### 5. Limits v1 (inline)
+- Parse errors in `useChat()` to block sends and show a basic countdown
+
+### 6. Limits v2 (dedicated hook)
+- Extract limit parsing logic to `useLimits()`: Move parsing, timers and derived state out. Replace `parseLimits` calls with `applyLimitsFromError(err)`
+
+### 7. Polish the UI
+- Banners, disabled input, placeholder hints, top and near-input notices
+
+### 8, Refactor error sources
+- Pass memoized error bag to `useLimits()` so background errors also trigger banners without hard errors.
+
+### 9. Edge cases
+- ms vs sec normalization, clamping to avoid a "0s" flicker, SSR-safe guards for `window`/`document` if needed
+
+### 10. Docs and tests
+- Document the contract of each hook. Add unit/integration tests.
 
 
