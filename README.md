@@ -134,19 +134,22 @@ tbd
 ### **Component Architecture**
 ```
 src/
-├── app/                    # Next.js 14 App Router
-│   ├── (auth)/            # Auth route group
-│   ├── (dashboard)/       # Protected dashboard routes
-│   └── api/               # API routes for NextAuth
-├── components/            # Reusable UI components
-│   ├── ui/               # shadcn/ui primitives
-│   ├── forms/            # Form components
-│   └── layout/           # Layout components
+├── app/                  # Next.js 14 App Router
+│   ├── (auth)/           # Auth route group
+│   ├── (dashboard)/      # Protected dashboard routes
+│   └── api/              # API routes for NextAuth
+├── components/           # Reusable UI components
+│   ├── auth/             # Auth components
+│   ├── chat/             # Chat components
+│   ├── providers/        # Providers components
+│   ├── layout/           # Layout components
+│   └── ui/               # shadcn/ui primitives
 ├── lib/                  # Utilities and configurations
 │   ├── apollo/           # GraphQL client setup
 │   ├── auth/             # NextAuth configuration
+│   ├── graphql/          # GraphQL codegen
+│   ├── hooks/            # Custom React hooks
 │   └── utils/            # Helper functions
-├── hooks/                # Custom React hooks
 ├── types/                # TypeScript type definitions
 └── styles/               # Global styles and themes
 ```

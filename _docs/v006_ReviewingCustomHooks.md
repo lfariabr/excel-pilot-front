@@ -123,4 +123,34 @@ We clear dots only when an assistant message time is after the last user send ti
 ### 10. Docs and tests
 - Document the contract of each hook. Add unit/integration tests.
 
+---
 
+## Analogies and Examples
+
+- Memo vs Effect
+    - Memo: "What’s the number of seconds left?” → pure math from timestamps.
+    - Effect: “Every second, update `now` so the computed seconds change.”
+
+Example:
+```tsx
+const [deadline, setDeadline] = useState<number | null>(null)
+const [now, setNow] = useState(Date.now())
+
+useEffect(() => {
+    if (!deadline) return;
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+    }, [deadline]);
+
+const secondsLeft = useMemo(() => {
+    if (!deadline) return 0;
+    const ms = deadline - now;
+    return ms > 0 ? Math.ceil(ms / 1000) : 0;
+}, [deadline, now]);
+```
+
+- Lifting limits logic
+    - Early version: `useChat()` did parsing and timers
+    - Final version: `useLimits()` does it all, `useChat()` just uses it.
+
+---
