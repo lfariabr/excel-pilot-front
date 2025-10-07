@@ -154,3 +154,66 @@ const secondsLeft = useMemo(() => {
     - Final version: `useLimits()` does it all, `useChat()` just uses it.
 
 ---
+
+## Refactors
+1. Unify banners
+Extract a `LimitBanner` component to render both rate and token notices with shared styling and copy.
+
+2. Humanize durations
+Introduce a `formatDuration(ms)` utility for “1h 23m” instead of raw hours.
+
+3. Centralize parsing
+Consider an Apollo `ErrorLink` that annotates errors with normalized `extensions` (ms, remaining, purpose). `useLimits()` then reads those consistent fields.
+
+4. Type satefy
+- `type LimitKind = 'rate' | 'token';`
+- `interface RateLimit { kind: 'rate'; resetAt: number }`
+- `interface TokenLimit { kind: 'token'; resetAt: number; remaining?: number }`
+
+5. SSR safety
+If any hook runs during SSR, guard window usage (intervals) behind `typeof window !== 'undefined'`.
+
+6. Performance
+Ensure `errorBag` is memoized (already done). Consider `useCallback` for handlers passed to deep children to reduce re-renders.
+
+7. Acessibility
+Add `aria-live="polite"` to banners so screen readers announce changes in countdowns.
+
+---
+
+## Testing Strategy
+
+### Unit Tests
+    - useLimits.parseLimits() scenarios:
+        - GraphQL extensions with ms and seconds values
+        - HTTP 429 with Retry-After header
+        - Message regex fallbacks
+    - Countdown ticks with fake timers (vi.useFakeTimers() or jest.useFakeTimers()):
+        - Set resetAt = now + 5000; advance timers and assert secondsLeft
+        - Verify cleanup stops the interval
+
+### Integration Tests
+    - Mock hooks with MSW to return:
+        - Rate-limited errors: banners show seconds; input disabled
+        - Token-limited errors: banners show remaining and reset hours; input disabled
+    - Send actions:
+        - Throw token limit on send; assert applyLimitsFromError disables input and shows accurate countdown immediately
+
+### E2E Tests (Playwright or Cypress)
+    - Simulate rapid sends to trigger both limits
+    - Verify no full-screen red error, only inline notices
+    - Check that typing dots stop after assistant reply
+
+---
+
+## Priorities
+[Short-term]
+- Extract LimitBanner and formatDuration util.
+- Add tests for useLimits() parsing and countdown.
+
+[Medium-term]
+- Consider ErrorLink to normalize errors at the transport layer.
+- Add an app-level LimitsProvider if you later need global badges (e.g., widget icon showing lock state).
+
+[Long-term]
+- Telemetry: log first-hit of each limit type and total minutes limited per user/session for product insights.
