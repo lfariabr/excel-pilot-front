@@ -9,6 +9,7 @@ import { useChat } from "@/lib/hooks/chat";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { stripMarkdown } from '@/lib/utils/chatUtils';
+import { formatDuration } from '@/lib/utils/format';
 
 export default function Chat() {
   const { data: session, status } = useSession();
@@ -239,12 +240,12 @@ export default function Chat() {
         {/* Near-input rate-limit notice */}
         {isRateLimited && (
           <div className="px-4 lg:px-6 py-2 bg-amber-50 text-amber-700 border-b border-amber-200 text-sm">
-            Rate limit exceeded. Try again in {rateLimitSecondsLeft}s.
+            Rate limit exceeded. Try again in {formatDuration((rateLimitSecondsLeft || 0) * 1000)}.
           </div>
         )}
         {isTokenLimited && (
           <div className="px-4 lg:px-6 py-2 bg-rose-50 text-rose-700 border-b border-rose-200 text-sm">
-            Daily token budget exceeded{typeof tokenRemaining === 'number' ? ` · Remaining: ${tokenRemaining} tokens` : ''}. Resets in {Math.max(1, Math.ceil(tokenLimitSecondsLeft/3600))}h.
+            Daily token budget exceeded{typeof tokenRemaining === 'number' ? ` · Remaining: ${tokenRemaining} tokens` : ''}. Resets in {formatDuration((tokenLimitSecondsLeft || 0) * 1000)}.
           </div>
         )}
 
