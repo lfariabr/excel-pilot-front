@@ -54,3 +54,4 @@ export const stripMarkdown = (text: string): string => {
   };
 
 export type ChatRole = 'user' | 'assistant';
+

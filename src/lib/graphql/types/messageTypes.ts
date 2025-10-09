@@ -7,7 +7,7 @@ export interface Message {
     content: string;
     role?: 'user' | 'assistant' | 'system';
     createdAt: string;
-    status: MessageStatus;
+    status?: MessageStatus;
     // conversationId?: string;
 }
 

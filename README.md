@@ -56,11 +56,30 @@ UI for guiding ExcelBM Concierges on daily tasks. Built with Next.js 14 (App Rou
 - Customize ChatSidebar for logout ✅
 - Personalize Bot avatar ✅
 
+**v0.0.6** - Custom Hooks
+- Review useLimits and useChat, my powerful custom hooks implementation ✅
+- Document the feature's details on _docs/v006_ReviewingCustomHooks.md ✅
+- Come out with a refactor list to generate more backlog ✅
+
 ---
 
 ### 🔨**WORK IN PROGRESS**:
 
-tbd
+**v0.0.7** - Custom Hooks Refactor
+1. add a `formatDuration(ms)` utility for “1h 23m” instead of raw hours. ✅
+2. extract a `LimitBanner` component to render both rate and token props.
+3. build Apollo ErrorLink to annotate errors with normalized `extensions` (ms, remaining, purpose).
+4. apply type satefy to the hooks
+Example:
+```typescript
+- type LimitKind = 'rate' | 'token';
+- interface RateLimit { kind: 'rate'; resetAt: number }
+- interface TokenLimit { kind: 'token'; resetAt: number; remaining?: number }
+```
+5. SSR safety with window guard `typeof window !== 'undefined'`.
+6. review `errorBag` is memoization (which has been already done). 
+7. consider `useCallback` for handlers passed to deep children to reduce re-renders.
+8. add `aria-live="polite"` to banners so screen readers announce changes in countdowns.
 
 ---
 

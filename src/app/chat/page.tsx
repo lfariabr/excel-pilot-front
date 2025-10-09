@@ -9,6 +9,8 @@ import { useChat } from "@/lib/hooks/chat";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { stripMarkdown } from '@/lib/utils/chatUtils';
+import { formatDuration } from '@/lib/utils/format';
+import { LimitsNotice } from '@/components/chat/LimitsNotice';
 
 export default function Chat() {
   const { data: session, status } = useSession();
@@ -41,6 +43,14 @@ export default function Chat() {
   } = useChat();
 
   const currentConversation = conversations.find(c => c.id === currentConversationId);
+
+  // Log backend internal errors for debugging (hidden from users)
+  React.useEffect(() => {
+    if (error?.message && /Cannot read properties of undefined|Cannot query field/i.test(error.message)) {
+      console.error('⚠️ Backend internal error detected:', error.message);
+      console.error('Full error object:', error);
+    }
+  }, [error]);
 
   // Check authentication status
   if (status === 'loading') {
@@ -142,7 +152,19 @@ export default function Chat() {
   const isRateLimitMessage = !!error?.message && /rate limit/i.test(error.message);
   const isTokenLimitMessage = !!error?.message && /token budget|token limit|daily token/i.test(error.message);
   const isUnauthError = !!error?.message && /unauth/i.test(error.message);
-  if (error && !isRateLimited && !isTokenLimited && !isRateLimitMessage && !isTokenLimitMessage) {
+  
+  // Filter out backend internal errors and GraphQL schema errors - these are not user-actionable
+  const isBackendInternalError = !!error?.message && /Cannot read properties of undefined|Cannot query field|Unknown type|Field .* doesn't exist/i.test(error.message);
+  
+  // Only show errors that users can actually act on
+  const shouldShowError = error && 
+    !isRateLimited && 
+    !isTokenLimited && 
+    !isRateLimitMessage && 
+    !isTokenLimitMessage && 
+    !isBackendInternalError;
+  
+  if (shouldShowError) {
     return (
       <div className="flex h-screen items-center justify-center">
         <div className="text-center">
@@ -235,25 +257,15 @@ export default function Chat() {
             </div>
           )}
         </div>
-
-        {/* Near-input rate-limit notice */}
-        {isRateLimited && (
-          <div className="px-4 lg:px-6 py-2 bg-amber-50 text-amber-700 border-b border-amber-200 text-sm">
-            Rate limit exceeded. Try again in {rateLimitSecondsLeft}s.
-          </div>
-        )}
-        {isTokenLimited && (
-          <div className="px-4 lg:px-6 py-2 bg-rose-50 text-rose-700 border-b border-rose-200 text-sm">
-            Daily token budget exceeded{typeof tokenRemaining === 'number' ? ` · Remaining: ${tokenRemaining} tokens` : ''}. Resets in {Math.max(1, Math.ceil(tokenLimitSecondsLeft/3600))}h.
-          </div>
-        )}
-
-        {/* Inline transient notice above input */}
-        {notice && (
-          <div className="px-4 lg:px-6 py-2 text-xs text-amber-800 bg-amber-50 border-t border-amber-200">
-            {notice}
-          </div>
-        )}
+        
+        {/* Component LimitsNotice */}
+        < LimitsNotice 
+          isRateLimited={isRateLimited}
+          isTokenLimited={isTokenLimited}
+          rateLimitSecondsLeft={rateLimitSecondsLeft}
+          tokenLimitSecondsLeft={tokenLimitSecondsLeft}
+          tokenRemaining={tokenRemaining}
+        />
 
         {/* Chat Input */}
         <div className="flex-shrink-0">
