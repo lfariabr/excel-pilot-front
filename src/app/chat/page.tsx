@@ -257,25 +257,8 @@ export default function Chat() {
             </div>
           )}
         </div>
-
-        {/* Near-input rate-limit notice */}
-        {/* {isRateLimited && (
-          <div className="px-4 lg:px-6 py-2 bg-amber-50 text-amber-700 border-b border-amber-200 text-sm" role="status" aria-live="polite">
-            Rate limit exceeded. Try again in {formatDuration((rateLimitSecondsLeft || 0) * 1000)}.
-          </div>
-        )}
-        {isTokenLimited && (
-          <div className="px-4 lg:px-6 py-2 bg-rose-50 text-rose-700 border-b border-rose-200 text-sm" role="status" aria-live="polite">
-            Daily token budget exceeded{typeof tokenRemaining === 'number' ? ` · Remaining: ${tokenRemaining} tokens` : ''}. Resets in {formatDuration((tokenLimitSecondsLeft || 0) * 1000)}.
-          </div>
-        )} */}
-
-        {/* Inline transient notice above input */}
-        {/* {notice && (
-          <div className="px-4 lg:px-6 py-2 text-xs text-amber-800 bg-amber-50 border-t border-amber-200">
-            {notice}
-          </div>
-        )} */}
+        
+        {/* Component LimitsNotice */}
         < LimitsNotice 
           isRateLimited={isRateLimited}
           isTokenLimited={isTokenLimited}

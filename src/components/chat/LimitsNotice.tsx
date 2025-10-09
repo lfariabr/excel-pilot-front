@@ -20,7 +20,11 @@ export const LimitsNotice: FC<Props> = ({
   if (!isRateLimited && !isTokenLimited) return null;
 
   return (
-    <div className="bg-yellow-100 text-yellow-800 px-4 py-2 rounded shadow-md mt-4">
+    <div 
+      className="bg-yellow-100 text-yellow-800 px-4 py-2 rounded shadow-md mt-4"
+      role="status"
+      aria-live="polite"
+    >
       {isRateLimited && (
         <p>🚫 You're currently rate limited. Try again in <strong>{formatDuration(rateLimitSecondsLeft * 1000)}</strong>.</p>
       )}
