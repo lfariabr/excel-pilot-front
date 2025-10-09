@@ -1,7 +1,9 @@
 export const formatSecondsToTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    const totalMinutes = mins + (secs > 0 ? 1 : 0); // arredonda pra cima só se sobrar segundos
+    if (!Number.isFinite(seconds) || seconds <= 0) return '0m';
+    const s = Math.floor(seconds);
+    const mins = Math.floor(s / 60);
+    const secs = s % 60;
+    const totalMinutes = mins + (secs > 0 ? 1 : 0); // round up minutes only when leftover seconds exist
   
     const hours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
@@ -45,13 +47,14 @@ export const formatSecondsToTime = (seconds: number) => {
 
     const totalHours = Math.floor(minutesCeil / 60);
     const remMinutes = minutesCeil % 60;
+    const remSeconds = s % 60;
 
     if (totalHours < 24) {
-      return `${totalHours}h ${remMinutes.toString().padStart(2, '0')}m`;
+      return `${totalHours}h ${remMinutes.toString().padStart(2, '0')}m ${remSeconds.toString().padStart(2, '0')}s`;
     }
 
     const days = Math.floor(totalHours / 24);
     const remHours = totalHours % 24;
     if (remHours === 0) return `${days}d`;
-    return `${days}d ${remHours}h`;
+    return `${days}d ${remHours}h ${remMinutes.toString().padStart(2, '0')}m ${remSeconds.toString().padStart(2, '0')}s`;
   };

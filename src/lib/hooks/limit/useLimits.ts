@@ -43,6 +43,7 @@ export const useLimits = (errors: unknown[]) => {
   // Extract limits from error object
   const parseLimits = (err: unknown): Limits & { rateIsAbsolute?: boolean; tokenIsAbsolute?: boolean } => {
     const e = err as any;
+    const now = Date.now();
     let rateResetAt: number | null = null;
     let tokenResetAt: number | null = null;
     let remainingTokens: number | null = null;
@@ -58,7 +59,7 @@ export const useLimits = (errors: unknown[]) => {
       if (!text) return;
       const mSec = text.match(/try again in\s+(\d+)\s*seconds?/i);
       if (mSec) {
-        rateResetAt = Date.now() + parseInt(mSec[1], 10) * 1000; // relative
+        rateResetAt = now + parseInt(mSec[1], 10) * 1000; // relative
       }
 
       const mTok = text.match(/remaining:\s*(\d+)\s*tokens?/i);
@@ -66,7 +67,7 @@ export const useLimits = (errors: unknown[]) => {
 
       const mH = text.match(/resets in\s+(\d+)\s*hours?/i);
       if (mH) {
-        tokenResetAt = Date.now() + parseInt(mH[1], 10) * 3600 * 1000; // relative
+        tokenResetAt = now + parseInt(mH[1], 10) * 3600 * 1000; // relative
       }
     };
 
@@ -92,7 +93,7 @@ export const useLimits = (errors: unknown[]) => {
     if (status === 429 && !rateResetAt) {
       const hdr = ne?.response?.headers?.get?.('retry-after');
       const sec = hdr ? parseInt(hdr, 10) : 30;
-      rateResetAt = Date.now() + (Number.isFinite(sec) && sec > 0 ? sec : 30) * 1000; // relative
+      rateResetAt = now + (Number.isFinite(sec) && sec > 0 ? sec : 30) * 1000; // relative
     }
 
     if (!rateResetAt || !tokenResetAt) {
@@ -107,6 +108,7 @@ export const useLimits = (errors: unknown[]) => {
 
   // Watch for incoming errors
   useEffect(() => {
+    const now = Date.now();
     for (const err of errors.filter(Boolean) as any[]) {
       const isObj = err && typeof err === 'object';
       if (isObj && processedErrorsRef.current.has(err as object)) {
@@ -116,7 +118,7 @@ export const useLimits = (errors: unknown[]) => {
 
       const { rateResetAt, tokenResetAt, remainingTokens, rateIsAbsolute, tokenIsAbsolute } = parseLimits(err);
       if (rateResetAt) {
-        const minFuture = Date.now() + 1500;
+        const minFuture = now + 1500;
         const next = Math.max(rateResetAt, minFuture);
         setRateLimitResetAt(prev => {
           if (!prev) return next;
@@ -126,7 +128,7 @@ export const useLimits = (errors: unknown[]) => {
         });
       }
       if (tokenResetAt) {
-        const minFuture = Date.now() + 1500;
+        const minFuture = now + 1500;
         const next = Math.max(tokenResetAt, minFuture);
         setTokenLimitResetAt(prev => {
           if (!prev) return next;
@@ -137,7 +139,9 @@ export const useLimits = (errors: unknown[]) => {
           setTokenRemaining(remainingTokens);
         }
       }
-      if (rateResetAt || tokenResetAt) break;
+      const haveRate = typeof rateLimitResetAt === 'number' || rateResetAt;
+      const haveToken = typeof tokenLimitResetAt === 'number' || tokenResetAt;
+      if (haveRate && haveToken) break;
     }
   }, [errors]);
 
@@ -148,9 +152,10 @@ export const useLimits = (errors: unknown[]) => {
   };
 
   const applyLimitsFromError = (err: unknown) => {
+    const now = Date.now();
     const { rateResetAt, tokenResetAt, remainingTokens, rateIsAbsolute, tokenIsAbsolute } = parseLimits(err);
     if (rateResetAt) {
-      const minFuture = Date.now() + 1500;
+      const minFuture = now + 1500;
       const next = Math.max(rateResetAt, minFuture);
       setRateLimitResetAt(prev => {
         if (!prev) return next;
@@ -159,7 +164,7 @@ export const useLimits = (errors: unknown[]) => {
       });
     }
     if (tokenResetAt) {
-      const minFuture = Date.now() + 1500;
+      const minFuture = now + 1500;
       const next = Math.max(tokenResetAt, minFuture);
       setTokenLimitResetAt(prev => {
         if (!prev) return next;
@@ -169,8 +174,8 @@ export const useLimits = (errors: unknown[]) => {
     }
     if (typeof remainingTokens === 'number') setTokenRemaining(remainingTokens);
 
-    const rateSecs = rateResetAt ? Math.max(1, Math.ceil((rateResetAt - Date.now()) / 1000)) : 0;
-    const tokenSecs = tokenResetAt ? Math.max(1, Math.ceil((tokenResetAt - Date.now()) / 1000)) : 0;
+    const rateSecs = rateResetAt ? Math.max(1, Math.ceil((rateResetAt - now) / 1000)) : 0;
+    const tokenSecs = tokenResetAt ? Math.max(1, Math.ceil((tokenResetAt - now) / 1000)) : 0;
     return { rateSecs, tokenSecs, remainingTokens };
   };
 

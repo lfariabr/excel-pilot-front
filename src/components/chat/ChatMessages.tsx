@@ -13,7 +13,6 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Message } from '@/lib/graphql/types/messageTypes'
-import { MessageStatus } from './MessageStatus';
 import { TypingIndicator } from './TypingIndicator';
 
 interface ChatMessagesProps {
@@ -158,13 +157,9 @@ function MessageBubble({ message }: MessageBubbleProps) {
         </div>
         
         <div className={`flex items-center gap-2 mt-1 ${isUser ? 'flex-row-reverse' : 'flex-row'}`}>
-          {isUser ? (
-            <MessageStatus status={message.status} timestamp={message.createdAt} />
-          ) : (
-            <span className="text-xs text-gray-500 dark:text-gray-400">
-              {formatTime(message.createdAt)}
-            </span>
-          )}
+          <span className="text-xs text-gray-500 dark:text-gray-400">
+            {formatTime(message.createdAt)}
+          </span>
           
           {showActions && !isUser && (
             <div className="flex gap-1">

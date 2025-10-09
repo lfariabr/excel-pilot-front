@@ -66,7 +66,7 @@ UI for guiding ExcelBM Concierges on daily tasks. Built with Next.js 14 (App Rou
 ### 🔨**WORK IN PROGRESS**:
 
 **v0.0.7** - Custom Hooks Refactor
-1. add a `formatDuration(ms)` utility for “1h 23m” instead of raw hours.
+1. add a `formatDuration(ms)` utility for “1h 23m” instead of raw hours. ✅
 2. extract a `LimitBanner` component to render both rate and token props.
 3. build Apollo ErrorLink to annotate errors with normalized `extensions` (ms, remaining, purpose).
 4. apply type satefy to the hooks
