@@ -9,7 +9,6 @@ import { useChat } from "@/lib/hooks/chat";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { stripMarkdown } from '@/lib/utils/chatUtils';
-import { formatDuration } from '@/lib/utils/format';
 import { LimitsNotice } from '@/components/chat/LimitsNotice';
 
 export default function Chat() {
@@ -273,7 +272,7 @@ export default function Chat() {
             value={prompt}
             onChange={setPrompt}
             onSend={handleSendMessage}
-            disabled={Boolean(isSendingMessage || isStartingConversation || isRateLimited)}
+            disabled={Boolean(isSendingMessage || isStartingConversation || isRateLimited || isTokenLimited)}
             placeholder={
               currentConversationId 
                 ? "Type your message..." 

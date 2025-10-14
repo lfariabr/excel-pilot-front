@@ -51,6 +51,8 @@ export const formatSecondsToTime = (seconds: number) => {
 
     if (totalHours < 24) {
       return `${totalHours}h ${remMinutes.toString().padStart(2, '0')}m ${remSeconds.toString().padStart(2, '0')}s`;
+    } else if (totalHours >= 24) {
+      return `${totalHours}h ${remMinutes.toString().padStart(2, '0')}m ${remSeconds.toString().padStart(2, '0')}s`;
     }
 
     const days = Math.floor(totalHours / 24);
