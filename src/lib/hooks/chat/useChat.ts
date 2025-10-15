@@ -30,8 +30,6 @@ export const useChat = (conversationId?: string) => {
         setRateLimitResetAt,
         applyLimitsFromError
       } = useLimits([
-        conversationsError,
-        messagesError,
         startConversationError,
         sendMessageError
       ]);
